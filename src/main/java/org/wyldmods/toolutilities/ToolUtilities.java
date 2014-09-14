@@ -28,7 +28,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "1.0")
+@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1")
 public class ToolUtilities
 {
 
