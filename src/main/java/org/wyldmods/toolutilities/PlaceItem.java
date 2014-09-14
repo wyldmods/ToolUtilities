@@ -30,7 +30,7 @@ public class PlaceItem {
 			EntityPlayerMP playerMP = (EntityPlayerMP) event.entityPlayer;
 			
 			int currentSlot = player.inventory.currentItem;
-			int newSlot = (currentSlot==0) ? 8 : currentSlot+1; //Loops over the top.
+			int newSlot = (currentSlot==0) ? 8 : (currentSlot+1)%8; //Loops over the top.
 			
 			if (newSlot > 8 || player.inventory.getStackInSlot(newSlot)==null) {
 				return;
