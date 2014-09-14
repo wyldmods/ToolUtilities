@@ -1,4 +1,4 @@
-package org.wyldmods.toolutilities;
+package org.wyldmods.toolutilities.common.handlers;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -10,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.MathHelper;
@@ -18,8 +17,10 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+
+import org.wyldmods.toolutilities.common.ToolUpgrade;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -35,7 +36,7 @@ public class AOEMining {
 			{	
 				if (current.getItem() instanceof ItemPickaxe || current.getItem() instanceof ItemSpade) 
 				{
-					if (current.stackTagCompound != null && current.stackTagCompound.getByte(ToolUtilities.MODID+"aoe")==1 && ForgeHooks.canHarvestBlock(event.block, player, event.world.getBlockMetadata(event.x,event.y,event.z)))
+					if (ToolUpgrade.THREExONE.isOn(current) && ForgeHooks.canHarvestBlock(event.block, player, event.world.getBlockMetadata(event.x,event.y,event.z)))
 					{
 						MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
 						if (mop.sideHit!=0 && mop.sideHit!=1)
@@ -44,7 +45,7 @@ public class AOEMining {
 							mineOutEverything(mineArray,event);
 						}
 					}
-					if (current.stackTagCompound != null && current.stackTagCompound.getByte(ToolUtilities.MODID+"aoe")==2 && ForgeHooks.canHarvestBlock(event.block, player, event.world.getBlockMetadata(event.x,event.y,event.z)))
+					if (ToolUpgrade.THREExTHREE.isOn(current) && ForgeHooks.canHarvestBlock(event.block, player, event.world.getBlockMetadata(event.x,event.y,event.z)))
 					{
 						//3x3 time!	
 						MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);

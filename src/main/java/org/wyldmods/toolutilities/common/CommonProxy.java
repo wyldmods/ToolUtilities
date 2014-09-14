@@ -1,4 +1,4 @@
-package org.wyldmods.toolutilities;
+package org.wyldmods.toolutilities.common;
 
 public class CommonProxy {
 	
