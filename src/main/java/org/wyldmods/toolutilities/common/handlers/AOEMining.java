@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
+import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.ToolUpgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -161,6 +162,10 @@ public class AOEMining
                     handlerClient.addToSendQueue(new C07PacketPlayerDigging(0, x, y, z, Minecraft.getMinecraft().objectMouseOver.sideHit));
                     handlerClient.addToSendQueue(new C07PacketPlayerDigging(2, x, y, z, Minecraft.getMinecraft().objectMouseOver.sideHit));
                 }
+            }
+            else if (Config.noisyBlocks)
+            {
+                world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (meta << 12));
             }
         }
     }
