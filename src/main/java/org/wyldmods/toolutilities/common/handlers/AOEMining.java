@@ -24,90 +24,94 @@ import org.wyldmods.toolutilities.common.ToolUpgrade;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class AOEMining {
+public class AOEMining
+{
 
-	@SubscribeEvent
-	public void mineAOE(BreakEvent event) {
+    @SubscribeEvent
+    public void mineAOE(BreakEvent event)
+    {
+        int x = event.x, y = event.y, z = event.z;
+        EntityPlayer player = event.getPlayer();
+        if (player != null)
+        {
+            ItemStack current = player.getCurrentEquippedItem();
+            if (current != null && !event.world.isRemote)
+            {
+                if (current.getItem() instanceof ItemPickaxe || current.getItem() instanceof ItemSpade)
+                {
+                    if (ToolUpgrade.THREExONE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+                    {
+                        MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
+                        if (mop.sideHit != 0 && mop.sideHit != 1)
+                        {
+                            int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
+                            mineOutEverything(mineArray, event);
+                        }
+                    }
+                    if (ToolUpgrade.THREExTHREE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+                    {
+                        // 3x3 time!
+                        MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
+                        switch (mop.sideHit)
+                        {
+                        case 0: // Bottom
+                            int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
+                            mineOutEverything(mineArrayBottom, event);
+                            break;
+                        case 1: // Top
+                            int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
+                            mineOutEverything(mineArrayTop, event);
+                            break;
+                        case 2: // South
+                            int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
+                            mineOutEverything(mineArraySouth, event);
+                            break;
+                        case 3: // North
+                            int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
+                            mineOutEverything(mineArrayNorth, event);
+                            break;
+                        case 4: // East
+                            int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
+                            mineOutEverything(mineArrayEast, event);
+                            break;
+                        case 5: // West
+                            int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
+                            mineOutEverything(mineArrayWest, event);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return;
+    }
 
-		EntityPlayer player = event.getPlayer();
-		if (player != null) {
-			ItemStack current = player.getCurrentEquippedItem();
-			if (current != null && !event.world.isRemote) 
-			{	
-				if (current.getItem() instanceof ItemPickaxe || current.getItem() instanceof ItemSpade) 
-				{
-					if (ToolUpgrade.THREExONE.isOn(current) && ForgeHooks.canHarvestBlock(event.block, player, event.world.getBlockMetadata(event.x,event.y,event.z)))
-					{
-						MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-						if (mop.sideHit!=0 && mop.sideHit!=1)
-						{
-							int[][] mineArray = {{0,1,0}, {0,-1,0}};
-							mineOutEverything(mineArray,event);
-						}
-					}
-					if (ToolUpgrade.THREExTHREE.isOn(current) && ForgeHooks.canHarvestBlock(event.block, player, event.world.getBlockMetadata(event.x,event.y,event.z)))
-					{
-						//3x3 time!	
-						MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-						switch (mop.sideHit) {
-						case 0: //Bottom
-							int[][]mineArrayBottom={{1,0,1},{1,0,0},{1,0,-1},{0,0,1},{0,0,-1},{-1,0,1},{-1,0,0},{-1,0,-1}};
-							mineOutEverything(mineArrayBottom,event);
-							break;
-						case 1: //Top
-							int[][]mineArrayTop={{1,0,1},{1,0,0},{1,0,-1},{0,0,1},{0,0,-1},{-1,0,1},{-1,0,0},{-1,0,-1}};
-							mineOutEverything(mineArrayTop,event);
-							break;
-						case 2: //South
-							int[][]mineArraySouth={{-1,1,0},{-1,0,0},{-1,-1,0},{0,1,0},{0,-1,0},{1,1,0},{1,0,0},{1,-1,0}};
-							mineOutEverything(mineArraySouth,event);
-							break;
-						case 3: //North
-							int[][]mineArrayNorth={{-1,1,0},{-1,0,0},{-1,-1,0},{0,1,0},{0,-1,0},{1,1,0},{1,0,0},{1,-1,0}};
-							mineOutEverything(mineArrayNorth,event);
-							break;
-						case 4: //East
-							int[][]mineArrayEast={{0,1,1},{0,0,1},{0,-1,1},{0,1,0},{0,-1,0},{0,1,-1},{0,0,-1},{0,-1,-1}};
-							mineOutEverything(mineArrayEast,event);
-							break;
-						case 5: //West
-							int[][]mineArrayWest={{0,1,1},{0,0,1},{0,-1,1},{0,1,0},{0,-1,0},{0,1,-1},{0,0,-1},{0,-1,-1}};
-							mineOutEverything(mineArrayWest,event);
-							break;
-						}
-					}
-				}
-			}
-		}
-		return;
-	}
+    public void mineOutEverything(int[][] locations, BreakEvent event)
+    {
+        EntityPlayer player = event.getPlayer();
+        ItemStack current = player.getCurrentEquippedItem();
 
-	public void mineOutEverything(int[][] locations, BreakEvent event)
-	{
-		EntityPlayer player = event.getPlayer();
-		ItemStack current = player.getCurrentEquippedItem();
-		float mainHardness = event.block.getBlockHardness(event.world,event.x,event.y,event.z);
+        for (int i = 0; i < locations.length; i++)
+        {
+            Block miningBlock = event.world.getBlock(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]);
+            int meta = event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]);
+            if (canHarvestBlock(player, event.block, miningBlock, meta, event.x, event.y, event.z))
+            {
+                mineBlock(event.world, event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2],
+                        event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]), player, miningBlock);
+                current.damageItem(1, player);
+                player.addExhaustion((float) 0.025);
+                if (current.getItemDamage() >= (current.getMaxDamage() - 1)) // Off by one
+                {
+                    player.destroyCurrentEquippedItem();
+                    return;
+                }
+            }
+        }
+    }
 
-		for (int i=0; i < locations.length; i++) {
-			Block miningBlock = event.world.getBlock(event.x+locations[i][0], event.y+locations[i][1], event.z+locations[i][2]);
-			int meta = event.world.getBlockMetadata(event.x+locations[i][0], event.y+locations[i][1], event.z+locations[i][2]);
-			float hardness = miningBlock.getBlockHardness(event.world, event.x+locations[i][0], event.y+locations[i][1], event.z+locations[i][2]);
-			if (ForgeHooks.canHarvestBlock(miningBlock, player, meta) && hardness <= mainHardness+1.5F) 
-			{
-				mineBlock(event.world, event.x+locations[i][0], event.y+locations[i][1], event.z+locations[i][2], event.world.getBlockMetadata(event.x+locations[i][0], event.y+locations[i][1], event.z+locations[i][2]), player, miningBlock);
-				current.damageItem(1, player);
-				player.addExhaustion((float) 0.025);
-				if (current.getItemDamage()>=(current.getMaxDamage()-1)) //Off by one
-				{
-					player.destroyCurrentEquippedItem();
-					return;
-				}
-			}
-		}
-	}
-	
-	public static MovingObjectPosition raytraceFromEntity (World world, Entity player, boolean par3, double range)
-    {	//100% borrowed from Tinkers Construct (CC0 license).
+    public static MovingObjectPosition raytraceFromEntity(World world, Entity player, boolean par3, double range)
+    {	// 100% borrowed from Tinkers Construct (CC0 license).
         float f = 1.0F;
         float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
         float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
@@ -132,33 +136,49 @@ public class AOEMining {
         return world.func_147447_a(vec3, vec31, par3, !par3, par3);
     }
 
-	public void mineBlock (World world, int x, int y, int z, int meta, EntityPlayer player, Block block)
-	{	
-		// Workaround for dropping experience
-		boolean silktouch = EnchantmentHelper.getSilkTouchModifier(player);
-		int fortune = EnchantmentHelper.getFortuneModifier(player);
-		int exp = block.getExpDrop(world, meta, fortune);
+    public void mineBlock(World world, int x, int y, int z, int meta, EntityPlayer player, Block block)
+    {
+        // Workaround for dropping experience
+        boolean silktouch = EnchantmentHelper.getSilkTouchModifier(player);
+        int fortune = EnchantmentHelper.getFortuneModifier(player);
+        int exp = block.getExpDrop(world, meta, fortune);
 
-		block.onBlockHarvested(world, x, y, z, meta, player);
-		if (block.removedByPlayer(world, player, x, y, z, true))
-		{
-			block.onBlockDestroyedByPlayer(world, x, y, z, meta);
-			block.harvestBlock(world, player, x, y, z, meta);
-			// Workaround for dropping experience
-			if (!silktouch)
-				block.dropXpOnBlockBreak(world, x, y, z, exp);
+        block.onBlockHarvested(world, x, y, z, meta, player);
+        if (block.removedByPlayer(world, player, x, y, z, true))
+        {
+            block.onBlockDestroyedByPlayer(world, x, y, z, meta);
+            block.harvestBlock(world, player, x, y, z, meta);
+            // Workaround for dropping experience
+            if (!silktouch)
+                block.dropXpOnBlockBreak(world, x, y, z, exp);
 
-			if (world.isRemote)
-			{
-				INetHandler handler = FMLClientHandler.instance().getClientPlayHandler();
-				if (handler != null && handler instanceof NetHandlerPlayClient)
-				{
-					NetHandlerPlayClient handlerClient = (NetHandlerPlayClient) handler;
-					handlerClient.addToSendQueue(new C07PacketPlayerDigging(0, x, y, z, Minecraft.getMinecraft().objectMouseOver.sideHit));
-					handlerClient.addToSendQueue(new C07PacketPlayerDigging(2, x, y, z, Minecraft.getMinecraft().objectMouseOver.sideHit));
-				}
-			}
-		}
-	}
+            if (world.isRemote)
+            {
+                INetHandler handler = FMLClientHandler.instance().getClientPlayHandler();
+                if (handler != null && handler instanceof NetHandlerPlayClient)
+                {
+                    NetHandlerPlayClient handlerClient = (NetHandlerPlayClient) handler;
+                    handlerClient.addToSendQueue(new C07PacketPlayerDigging(0, x, y, z, Minecraft.getMinecraft().objectMouseOver.sideHit));
+                    handlerClient.addToSendQueue(new C07PacketPlayerDigging(2, x, y, z, Minecraft.getMinecraft().objectMouseOver.sideHit));
+                }
+            }
+        }
+    }
 
+    private boolean canHarvestBlock(EntityPlayer player, Block origBlock, Block block, int meta, int x, int y, int z)
+    {
+        ItemStack current = player.getCurrentEquippedItem();
+        
+        if (current == null)
+            return false;
+        
+        if (block.getHarvestTool(meta) != null && current.getItem().getToolClasses(current).contains(block.getHarvestTool(meta)))
+        {
+            int harvestLevel = block.getHarvestLevel(meta);
+            float hardness = block.getBlockHardness(player.worldObj, x, y, z);
+            return harvestLevel <= current.getItem().getHarvestLevel(current, block.getHarvestTool(meta)) && origBlock.getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5;
+        }
+        
+        return false;
+    }
 }
