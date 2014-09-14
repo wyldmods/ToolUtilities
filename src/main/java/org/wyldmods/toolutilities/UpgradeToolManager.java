@@ -1,4 +1,4 @@
-package com.insane.toolutilities;
+package org.wyldmods.toolutilities;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemPickaxe;

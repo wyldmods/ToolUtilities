@@ -1,4 +1,4 @@
-package com.insane.toolutilities;
+package org.wyldmods.toolutilities;
 
 import java.io.File;
 import java.io.IOException;

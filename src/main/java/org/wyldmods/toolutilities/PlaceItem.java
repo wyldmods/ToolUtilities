@@ -1,4 +1,4 @@
-package com.insane.toolutilities;
+package org.wyldmods.toolutilities;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

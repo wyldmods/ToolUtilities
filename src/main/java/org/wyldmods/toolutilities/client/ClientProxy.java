@@ -1,6 +1,6 @@
-package com.insane.toolutilities.client;
+package org.wyldmods.toolutilities.client;
 
-import com.insane.toolutilities.CommonProxy;
+import org.wyldmods.toolutilities.CommonProxy;
 
 public class ClientProxy extends CommonProxy {
 	

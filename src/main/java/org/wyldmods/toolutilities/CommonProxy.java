@@ -1,4 +1,4 @@
-package com.insane.toolutilities;
+package org.wyldmods.toolutilities;
 
 public class CommonProxy {
 	
