@@ -47,8 +47,7 @@ public class ToolUpgradeRecipe
         {
             if (recipe.input.isAssignableFrom(input.getItem().getClass()))
             {
-                int damage = recipe.modifier.getItemDamage();
-                if ((damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem())
+                if (matches(recipe, input, modifier))
                 {
                     return true; 
                 }
@@ -67,16 +66,22 @@ public class ToolUpgradeRecipe
 
         for (ToolUpgradeRecipe recipe : recipes)
         {
-            if (recipe.input.isAssignableFrom(input.getItem().getClass()))
+            if (matches(recipe, input, modifier))
             {
-                int damage = recipe.modifier.getItemDamage();
-                if ((damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem())
-                {
-                    return recipe;
-                }
+                return recipe;
             }
         }
         
         return null;
+    }
+    
+    private static boolean matches(ToolUpgradeRecipe recipe, ItemStack input, ItemStack modifier)
+    {
+        if (recipe.input.isAssignableFrom(input.getItem().getClass()))
+        {
+            int damage = recipe.modifier.getItemDamage();
+            return (damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem() && recipe.modifier.stackSize == modifier.stackSize;
+        }
+        return false;
     }
 }
