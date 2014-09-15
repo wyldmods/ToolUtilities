@@ -53,7 +53,8 @@ public class AOEMining
                     {
                         // 3x3 time!
                         MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-                        if (mop == null) return;
+                        if (mop == null)
+                            return;
                         switch (mop.sideHit)
                         {
                         case 0: // Bottom
@@ -99,14 +100,13 @@ public class AOEMining
             int meta = event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]);
             if (canHarvestBlock(player, event.block, miningBlock, meta, event.x, event.y, event.z))
             {
-                mineBlock(event.world, event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2],
-                        event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]), player, miningBlock);
-                current.damageItem(1, player);
-                player.addExhaustion((float) 0.025);
-                if (current.getItemDamage() >= (current.getMaxDamage() - 1)) // Off by one
+                if (!((ItemTool) current.getItem()).onBlockStartBreak(current, event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2], player))
                 {
-                    player.destroyCurrentEquippedItem();
-                    return;
+                    mineBlock(event.world, event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2],
+                            event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]), player, miningBlock);
+                    ((ItemTool) current.getItem()).onBlockDestroyed(current, event.world, miningBlock, event.x + locations[i][0], event.y + locations[i][1], event.z
+                            + locations[i][2], player);
+                    player.addExhaustion((float) 0.025);
                 }
             }
         }
@@ -190,9 +190,7 @@ public class AOEMining
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
         float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
         // It works. It just does.
-        return (digSpeed > 1.0F 
-             && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) 
-             && hardness > 0
-             && origBlock.getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
+        return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness > 0 && origBlock
+                .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
     }
 }
