@@ -53,6 +53,7 @@ public class AOEMining
                     {
                         // 3x3 time!
                         MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
+                        if (mop == null) return;
                         switch (mop.sideHit)
                         {
                         case 0: // Bottom
