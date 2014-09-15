@@ -22,12 +22,12 @@ import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.ToolUpgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class AOEMining
 {
-
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void mineAOE(BreakEvent event)
     {
         int x = event.x, y = event.y, z = event.z;

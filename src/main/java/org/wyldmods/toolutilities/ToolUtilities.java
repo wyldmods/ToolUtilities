@@ -1,7 +1,5 @@
 package org.wyldmods.toolutilities;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
@@ -54,17 +52,7 @@ public class ToolUtilities
     {
         logger = event.getModLog();
 
-        File file = new File(event.getModConfigurationDirectory() + "/ToolUtilities.cfg");
-        try
-        {
-            file.createNewFile();
-        }
-        catch (IOException e)
-        {
-            logger.info("Unable to create configuration file for TorchUtilities");
-        }
-
-        Config.doConfig(file);
+        Config.doConfig(event.getSuggestedConfigurationFile());
 
         MinecraftForge.EVENT_BUS.register(new PlaceItem());
         MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
@@ -105,8 +93,7 @@ public class ToolUtilities
         String[] info = input.split(":");
         if (info.length < 2)
         {
-            logger.info("Issue with Right Click Item. Format: modid:item:damage. Reverting to default.");
-
+            logger.info("Issue with " + input + ". Format: modid:item:damage. Reverting to default.");
             outputStack = new ItemStack(Items.water_bucket, 1);
         }
         else
@@ -118,7 +105,7 @@ public class ToolUtilities
                 Block possibleBlock = GameRegistry.findBlock(info[0], info[1]);
                 if (possibleBlock == null)
                 {
-                    logger.info("Issue(2) with Config Item. Format: modid:item:damage. Reverting to default.");
+                    logger.info("Issue(2) with " + input + ". Format: modid:item:damage. Reverting to default.");
                     outputStack = new ItemStack(Items.water_bucket, 1);
                 }
                 else
@@ -144,15 +131,7 @@ public class ToolUtilities
                     outputStack = new ItemStack(possible, 1);
                 }
             }
-
-            if (outputStack == null)
-            {
-                logger.info("Issue(3) with Config Item. Format: modid:item:damage. Reverting to default.");
-                outputStack = new ItemStack(Items.water_bucket, 1);
-            }
         }
         return outputStack;
-
     }
-
 }
