@@ -92,7 +92,24 @@ public class ToolUpgradeRecipe
 
         return null;
     }
-
+    
+    public static boolean recipeExistsFor(ItemStack stack, ToolUpgrade upgrade)
+    {
+        if (stack == null || upgrade == null)
+        {
+            return false;
+        }
+        
+        for (ToolUpgradeRecipe recipe : recipes)
+        {
+            if (recipe.input.isAssignableFrom(stack.getItem().getClass()) && recipe.upgrade == upgrade)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private static boolean matches(ToolUpgradeRecipe recipe, ItemStack input, ItemStack modifier)
     {
         if (recipe.input.isAssignableFrom(input.getItem().getClass()))
@@ -117,4 +134,5 @@ public class ToolUpgradeRecipe
         }
         return false;
     }
+
 }

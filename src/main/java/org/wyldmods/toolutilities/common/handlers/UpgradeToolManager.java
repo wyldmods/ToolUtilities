@@ -102,7 +102,7 @@ public class UpgradeToolManager
         ToolUpgrade[] upgrades = new ToolUpgrade[0];
         for (ToolUpgrade upgrade : ToolUpgrade.values())
         {
-            if (upgrade.hasPreReqs(stack) && !upgrade.isOn(stack))
+            if (upgrade.hasPreReqs(stack) && !upgrade.isOn(stack) && ToolUpgradeRecipe.recipeExistsFor(stack, upgrade))
             {
                 upgrades = ArrayUtils.add(upgrades, upgrade);
             }
