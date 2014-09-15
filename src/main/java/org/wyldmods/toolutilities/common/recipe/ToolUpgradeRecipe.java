@@ -74,6 +74,24 @@ public class ToolUpgradeRecipe
 
         return null;
     }
+    
+    public static ItemStack getModifierFor(ItemStack input, ToolUpgrade upgrade)
+    {
+        if (input == null || upgrade == null)
+        {
+            return null;
+        }
+
+        for (ToolUpgradeRecipe recipe : recipes)
+        {
+            if (matches(recipe, input, upgrade))
+            {
+                return recipe.modifier.copy();
+            }
+        }
+
+        return null;
+    }
 
     private static boolean matches(ToolUpgradeRecipe recipe, ItemStack input, ItemStack modifier)
     {
@@ -81,6 +99,18 @@ public class ToolUpgradeRecipe
         {
             int damage = recipe.modifier.getItemDamage();
             if ((damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem() && recipe.modifier.stackSize == modifier.stackSize)
+            {
+                return !recipe.upgrade.isOn(input) && recipe.upgrade.hasPreReqs(input);
+            }
+        }
+        return false;
+    }
+    
+    private static boolean matches(ToolUpgradeRecipe recipe, ItemStack input, ToolUpgrade upgrade)
+    {
+        if (recipe.input.isAssignableFrom(input.getItem().getClass()))
+        {
+            if (upgrade == recipe.upgrade)
             {
                 return !recipe.upgrade.isOn(input) && recipe.upgrade.hasPreReqs(input);
             }
