@@ -9,16 +9,17 @@ import org.wyldmods.toolutilities.common.util.NBTHelper;
 
 public enum ToolUpgrade
 {
-    PLACE("canPlace"),
-    THREExONE("aoe1", 2),
-    THREExTHREE("aoe2", 1);
+    PLACE,
+    THREExONE(2),
+    THREExTHREE(1);
     
     public final String nbtKey;
-    public final int[] blacklist;
+    private final int[] blacklist;
     private final String tooltip;
-    ToolUpgrade(String nbtKey, int... blacklist)
+    
+    ToolUpgrade(int... blacklist)
     {
-        this.nbtKey = ToolUtilities.MODID + nbtKey;
+        this.nbtKey = ToolUtilities.MODID + ":" + name();
         this.blacklist = blacklist;
         this.tooltip = ToolUtilities.LOCALIZING + ".tooltip.upgrade." + this.name().toLowerCase();
     }
