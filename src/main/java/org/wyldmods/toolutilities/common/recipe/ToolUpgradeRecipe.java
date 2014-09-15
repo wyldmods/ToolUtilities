@@ -15,7 +15,7 @@ public class ToolUpgradeRecipe
     public final ItemStack modifier;
     public final ToolUpgrade upgrade;
     public final int cost;
-    
+
     private ToolUpgradeRecipe(Class<? extends ItemTool> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
     {
         this.input = input;
@@ -30,7 +30,7 @@ public class ToolUpgradeRecipe
     {
         addUpgradeRecipe(input, modifier, upgrade, 5);
     }
-    
+
     public static void addUpgradeRecipe(Class<? extends ItemTool> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
     {
         recipes.add(new ToolUpgradeRecipe(input, modifier, upgrade, cost));
@@ -49,14 +49,14 @@ public class ToolUpgradeRecipe
             {
                 if (matches(recipe, input, modifier))
                 {
-                    return true; 
+                    return true;
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     public static ToolUpgradeRecipe getOutputFor(ItemStack input, ItemStack modifier)
     {
         if (input == null || modifier == null)
@@ -71,16 +71,19 @@ public class ToolUpgradeRecipe
                 return recipe;
             }
         }
-        
+
         return null;
     }
-    
+
     private static boolean matches(ToolUpgradeRecipe recipe, ItemStack input, ItemStack modifier)
     {
         if (recipe.input.isAssignableFrom(input.getItem().getClass()))
         {
             int damage = recipe.modifier.getItemDamage();
-            return (damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem() && recipe.modifier.stackSize == modifier.stackSize;
+            if ((damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem() && recipe.modifier.stackSize == modifier.stackSize)
+            {
+                return !recipe.upgrade.isOn(input) && recipe.upgrade.hasPreReqs(input);
+            }
         }
         return false;
     }

@@ -1,0 +1,5 @@
+
+# Tooltips #
+toolUtils.upgrade.place.tooltip=Can place blocks and use items
+toolUtils.upgrade.threexone.tooltip=Mines in a vertical 3x1
+toolUtils.upgrade.threexthree.tooltip=Mines in a 3x3

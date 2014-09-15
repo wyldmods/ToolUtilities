@@ -1,7 +1,6 @@
 package org.wyldmods.toolutilities.common.handlers;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -18,7 +17,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
@@ -175,23 +173,25 @@ public class AOEMining
     private boolean canHarvestBlock(EntityPlayer player, Block origBlock, Block block, int meta, int x, int y, int z)
     {
         ItemStack current = player.getCurrentEquippedItem();
-        
+
         if (current == null)
             return false;
-        
+
         String toolClass;
-        if (current.getItem() instanceof ItemPickaxe) 
+        if (current.getItem() instanceof ItemPickaxe)
         {
-        	toolClass = "pickaxe";
+            toolClass = "pickaxe";
         }
         else
         {
-        	toolClass = "shovel";
+            toolClass = "shovel";
         }
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
-        float digSpeed = ((ItemTool)current.getItem()).getDigSpeed(current, block, meta);
-        //It works. It just does.
-        return (digSpeed>1.0F && block.getHarvestLevel(meta) <= ((ItemTool)current.getItem()).getHarvestLevel(current, toolClass) &&origBlock.getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
-        
+        float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
+        // It works. It just does.
+        return (digSpeed > 1.0F 
+             && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) 
+             && hardness > 0
+             && origBlock.getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
     }
 }

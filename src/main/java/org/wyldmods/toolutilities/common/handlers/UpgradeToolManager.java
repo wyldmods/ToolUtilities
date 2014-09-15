@@ -1,5 +1,8 @@
 package org.wyldmods.toolutilities.common.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.item.ItemTool;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -31,10 +34,12 @@ public class UpgradeToolManager
     {
         if (event.itemStack.getItem() instanceof ItemTool)
         {
+            List<String> lines = new ArrayList<String>();
             for (ToolUpgrade upgrade : ToolUpgrade.getUpgradesOn(event.itemStack))
             {
-                event.toolTip.add(upgrade.getTooltip());
+                lines.add(upgrade.getTooltip());
             }
+            event.toolTip.addAll(1, lines);
         }
     }
 }

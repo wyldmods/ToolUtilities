@@ -9,76 +9,114 @@ import org.wyldmods.toolutilities.common.util.NBTHelper;
 
 public enum ToolUpgrade
 {
-    PLACE,
-    THREExONE(2),
-    THREExTHREE(1);
+    PLACE, THREExONE(2), THREExTHREE(1);
     
+    static
+    {
+        THREExTHREE.addPreReq(THREExONE);
+    }
+
     public final String nbtKey;
-    private final int[] blacklist;
-    private final String tooltip;
-    
+    private int[] prereqs;
+    private int[] blacklist;
+    private String tooltip;
+
     ToolUpgrade(int... blacklist)
     {
+        this.blacklist = new int[0];
+        this.prereqs = new int[0];
+        
+        for (int i : blacklist)
+        {
+            addBlacklist(i);
+        }
+
         this.nbtKey = ToolUtilities.MODID + ":" + name();
-        this.blacklist = blacklist;
-        this.tooltip = ToolUtilities.LOCALIZING + ".tooltip.upgrade." + this.name().toLowerCase();
+        this.tooltip = ToolUtilities.LOCALIZING + ".upgrade." + this.name().toLowerCase() + ".tooltip";
     }
-    
+
+    public void addPreReq(int index)
+    {
+        prereqs = ArrayUtils.add(prereqs, index);
+    }
+
+    public void addPreReq(ToolUpgrade upgrade)
+    {
+        addPreReq(upgrade.ordinal());
+    }
+
+    public void addBlacklist(int index)
+    {
+        blacklist = ArrayUtils.add(blacklist, index);
+    }
+
+    public void addBlacklist(ToolUpgrade upgrade)
+    {
+        addBlacklist(upgrade.ordinal());
+    }
+
     public String getTooltip()
     {
         return StatCollector.translateToLocal(tooltip);
     }
-    
+
     public static boolean hasUpgrade(ItemStack stack, ToolUpgrade upgrade)
     {
         return stack.stackTagCompound != null && stack.stackTagCompound.getBoolean(upgrade.nbtKey);
     }
-    
+
     public boolean isOn(ItemStack stack)
     {
         return hasUpgrade(stack, this);
     }
-    
+
     public void apply(ItemStack stack)
     {
-        if (!canApply(stack, this))
+        for (int i : this.blacklist)
         {
-            for (int i : this.blacklist)
-            {
-                values()[i].remove(stack);
-            }
+            values()[i].remove(stack);
         }
+
         NBTHelper.getTag(stack).setBoolean(nbtKey, true);
     }
-    
+
     public void remove(ItemStack stack)
     {
         NBTHelper.getTag(stack).setBoolean(nbtKey, false);
     }
-    
-    /**
-     * If applying the upgrade to the passed stack would have any conflicts on the upgrade's blacklist
-     */
-    public static boolean canApply(ItemStack stack, ToolUpgrade upgrade)
+
+    public boolean isBlacklisted(ItemStack stack)
     {
-        for (ToolUpgrade u : values())
+        for (ToolUpgrade u : getUpgradesOn(stack))
         {
-            if (u.isOn(stack))
+            for (int blacklisted : u.blacklist)
             {
-                int[] blacklist = u.blacklist;
-                for (int i : blacklist)
+                if (values()[blacklisted] == this)
                 {
-                    if (i == upgrade.ordinal())
-                    {
-                        return false;
-                    }
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
+    public boolean hasPreReqs(ItemStack stack)
+    {
+        for (int i : prereqs)
+        {
+            if (!values()[i].isOn(stack))
+            {
+                return false;
+            }
+        }
         return true;
     }
-    
+
+    public static boolean canApply(ItemStack stack, ToolUpgrade upgrade)
+    {
+        return !upgrade.isBlacklisted(stack) && upgrade.hasPreReqs(stack);
+    }
+
     public static ToolUpgrade[] getUpgradesOn(ItemStack stack)
     {
         ToolUpgrade[] ret = new ToolUpgrade[0];
