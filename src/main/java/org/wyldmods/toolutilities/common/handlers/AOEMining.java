@@ -1,6 +1,7 @@
 package org.wyldmods.toolutilities.common.handlers;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -10,12 +11,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
@@ -176,13 +179,19 @@ public class AOEMining
         if (current == null)
             return false;
         
-        if (block.getHarvestTool(meta) != null && current.getItem().getToolClasses(current).contains(block.getHarvestTool(meta)))
+        String toolClass;
+        if (current.getItem() instanceof ItemPickaxe) 
         {
-            int harvestLevel = block.getHarvestLevel(meta);
-            float hardness = block.getBlockHardness(player.worldObj, x, y, z);
-            return harvestLevel <= current.getItem().getHarvestLevel(current, block.getHarvestTool(meta)) && origBlock.getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5;
+        	toolClass = "pickaxe";
         }
+        else
+        {
+        	toolClass = "shovel";
+        }
+        float hardness = block.getBlockHardness(player.worldObj, x, y, z);
+        float digSpeed = ((ItemTool)current.getItem()).getDigSpeed(current, block, meta);
+        //It works. It just does.
+        return (digSpeed>1.0F && block.getHarvestLevel(meta) <= ((ItemTool)current.getItem()).getHarvestLevel(current, toolClass) &&origBlock.getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
         
-        return false;
     }
 }
