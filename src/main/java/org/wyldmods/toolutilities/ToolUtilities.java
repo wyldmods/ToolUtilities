@@ -19,7 +19,7 @@ import org.wyldmods.toolutilities.common.ToolUpgrade;
 import org.wyldmods.toolutilities.common.handlers.AOEMining;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
-import org.wyldmods.toolutilities.common.handlers.hoeGrassBreaking;
+import org.wyldmods.toolutilities.common.handlers.AOEHoe;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
 import cpw.mods.fml.common.Mod;
@@ -60,7 +60,7 @@ public class ToolUtilities
         MinecraftForge.EVENT_BUS.register(new PlaceItem());
         MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
         MinecraftForge.EVENT_BUS.register(new AOEMining());
-        MinecraftForge.EVENT_BUS.register(new hoeGrassBreaking());
+        MinecraftForge.EVENT_BUS.register(new AOEHoe());
     }
 
     @Mod.EventHandler

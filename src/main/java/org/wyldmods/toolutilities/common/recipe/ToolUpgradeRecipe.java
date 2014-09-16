@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.wyldmods.toolutilities.common.ToolUpgrade;

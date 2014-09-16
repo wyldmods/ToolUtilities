@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -42,7 +41,7 @@ public class UpgradeToolManager
     public void handleTooltipEvent(ItemTooltipEvent event)
     {
         // No possible upgrades? Moving on.
-        if ((getPossibleUpgrades(event.itemStack).length + ToolUpgrade.getUpgradesOn(event.itemStack).length)!=0) //You think ^ is hacky? You ain't seen nothing yet.
+        if (getPossibleUpgrades(event.itemStack).length + ToolUpgrade.getUpgradesOn(event.itemStack).length > 0)
         {
             // the lines to inject into the beginning of the tooltip
             List<String> lines = new ArrayList<String>();

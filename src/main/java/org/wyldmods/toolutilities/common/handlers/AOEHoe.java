@@ -1,17 +1,11 @@
 package org.wyldmods.toolutilities.common.handlers;
 
-import org.wyldmods.toolutilities.common.Config;
-import org.wyldmods.toolutilities.common.ToolUpgrade;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
@@ -20,14 +14,19 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
-public class hoeGrassBreaking {
+import org.wyldmods.toolutilities.common.Config;
+import org.wyldmods.toolutilities.common.ToolUpgrade;
+
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
+public class AOEHoe {
 	
 	public static Material[] validMaterials = {Material.plants, Material.vine};
 
 	@SubscribeEvent
 	public void mineAOE(BreakEvent event) 
 	{
-		int x = event.x, y = event.y, z = event.z;
 		EntityPlayer player = event.getPlayer();
 		if (player != null)
 		{
