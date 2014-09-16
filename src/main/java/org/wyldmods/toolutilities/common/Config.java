@@ -20,6 +20,10 @@ public class Config {
 
 	public static String blacklist;
 	
+	public static String hoeAreaItem;
+	public static boolean hoeAreaEnable;
+	public static int hoeAreaXP;
+	
 	
 	public static void doConfig(File file) {
 		Configuration config = new Configuration(file);
@@ -36,6 +40,10 @@ public class Config {
 		enableColumn = config.get("AreaMining","Enable1x3",true,"Enable 1x3 mining upgrade").getBoolean();
 		enableNine = config.get("AreaMining","Enable3x3",true,"Enable 3x3 mining ugprade").getBoolean();
 		noisyBlocks = config.get("AreaMining","noisyBlock",true,"When AOE blocks are broken, should they play a sound and make particles").getBoolean();
+		
+		hoeAreaXP = config.get("HoeArea","hoeAreaXPRequired",10,"Number of levels required for Hoe to cut grass in 3x3").getInt();
+		hoeAreaItem = config.get("HoeArea","hoeAreaItem", "minecraft:wheat_seeds", "Item required for Hoe to cut grass in a 3x3").getString();
+		hoeAreaEnable = config.get("HoeArea","Enable",true,"Enable Hoe to cut grass in 3x3 area").getBoolean();
 		
 		blacklist = config.get("RightClick","blacklist","","Blacklisted items for Right Click Placing").getString();
 		

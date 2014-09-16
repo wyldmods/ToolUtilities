@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -18,6 +19,7 @@ import org.wyldmods.toolutilities.common.ToolUpgrade;
 import org.wyldmods.toolutilities.common.handlers.AOEMining;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
+import org.wyldmods.toolutilities.common.handlers.hoeGrassBreaking;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
 import cpw.mods.fml.common.Mod;
@@ -44,6 +46,7 @@ public class ToolUtilities
     public static ItemStack rightClickItem;
     public static ItemStack areaItem;
     public static ItemStack nineItem;
+    public static ItemStack hoeAreaItem;
 
     public static ArrayList<Item> blacklistedItems = new ArrayList<Item>();
 
@@ -57,6 +60,7 @@ public class ToolUtilities
         MinecraftForge.EVENT_BUS.register(new PlaceItem());
         MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
         MinecraftForge.EVENT_BUS.register(new AOEMining());
+        MinecraftForge.EVENT_BUS.register(new hoeGrassBreaking());
     }
 
     @Mod.EventHandler
@@ -67,6 +71,7 @@ public class ToolUtilities
         areaItem = getStackFromString(Config.areaItem);
         logger.info("Column item: " + areaItem.getUnlocalizedName());
         nineItem = getStackFromString(Config.nineItem);
+        hoeAreaItem = getStackFromString(Config.hoeAreaItem);
 
         String[] seperatedItems = Config.blacklist.split(",");
         for (int i = 0; i < seperatedItems.length; i++)
@@ -84,6 +89,9 @@ public class ToolUtilities
         // 3x3
         ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, nineItem, ToolUpgrade.THREExTHREE, Config.nineXPAmount);
         ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, nineItem, ToolUpgrade.THREExTHREE, Config.nineXPAmount);
+        
+        //Hoe's in AoE for tall grass
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, Config.hoeAreaXP);
     }
 
     private ItemStack getStackFromString(String input)

@@ -41,8 +41,8 @@ public class UpgradeToolManager
     @SideOnly(Side.CLIENT) // hacky, should have it's own class
     public void handleTooltipEvent(ItemTooltipEvent event)
     {
-        // not a tool, we don't care
-        if (event.itemStack.getItem() instanceof ItemTool)
+        // No possible upgrades? Moving on.
+        if ((getPossibleUpgrades(event.itemStack).length + ToolUpgrade.getUpgradesOn(event.itemStack).length)!=0) //You think ^ is hacky? You ain't seen nothing yet.
         {
             // the lines to inject into the beginning of the tooltip
             List<String> lines = new ArrayList<String>();
@@ -52,7 +52,7 @@ public class UpgradeToolManager
             {
                 // check if control is down, if it is, continue, if not, add a tooltip for it
                 boolean isControlDown = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
-                if (!isControlDown)
+                if (!isControlDown && getPossibleUpgrades(event.itemStack).length != 0)
                 {
                     lines.add(String.format(EnumChatFormatting.WHITE + locTT("pressControl"), EnumChatFormatting.AQUA + "-" + EnumChatFormatting.ITALIC, "-"
                             + EnumChatFormatting.WHITE));

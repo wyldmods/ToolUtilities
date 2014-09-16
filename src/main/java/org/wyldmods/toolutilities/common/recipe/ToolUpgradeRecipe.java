@@ -3,6 +3,7 @@ package org.wyldmods.toolutilities.common.recipe;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraftforge.oredict.OreDictionary;
@@ -11,12 +12,12 @@ import org.wyldmods.toolutilities.common.ToolUpgrade;
 
 public class ToolUpgradeRecipe
 {
-    public final Class<? extends ItemTool> input;
+    public final Class<? extends Item> input;
     public final ItemStack modifier;
     public final ToolUpgrade upgrade;
     public final int cost;
 
-    private ToolUpgradeRecipe(Class<? extends ItemTool> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
+    private ToolUpgradeRecipe(Class<? extends Item> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
     {
         this.input = input;
         this.modifier = modifier;
@@ -26,12 +27,12 @@ public class ToolUpgradeRecipe
 
     private static List<ToolUpgradeRecipe> recipes = new ArrayList<ToolUpgradeRecipe>();
 
-    public static void addUpgradeRecipe(Class<? extends ItemTool> input, ItemStack modifier, ToolUpgrade upgrade)
+    public static void addUpgradeRecipe(Class<? extends Item> input, ItemStack modifier, ToolUpgrade upgrade)
     {
         addUpgradeRecipe(input, modifier, upgrade, 5);
     }
 
-    public static void addUpgradeRecipe(Class<? extends ItemTool> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
+    public static void addUpgradeRecipe(Class<? extends Item> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
     {
         recipes.add(new ToolUpgradeRecipe(input, modifier, upgrade, cost));
     }
