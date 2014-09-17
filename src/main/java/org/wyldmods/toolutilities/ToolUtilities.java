@@ -18,20 +18,21 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Logger;
 import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
-import org.wyldmods.toolutilities.common.ToolUpgrade;
 import org.wyldmods.toolutilities.common.handlers.AOEHoe;
 import org.wyldmods.toolutilities.common.handlers.AOEMining;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
+import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1")
+@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory")
 public class ToolUtilities
 {
 
@@ -52,13 +53,16 @@ public class ToolUtilities
     public static ItemStack hoeAreaItem;
 
     public static ArrayList<Item> blacklistedItems = new ArrayList<Item>();
+    
+    public static Config configHandler;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
 
-        Config.doConfig(event.getSuggestedConfigurationFile());
+        configHandler = Config.init(event.getSuggestedConfigurationFile());
+        FMLCommonHandler.instance().bus().register(configHandler);
 
         MinecraftForge.EVENT_BUS.register(new PlaceItem());
         MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());

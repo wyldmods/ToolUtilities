@@ -1,4 +1,4 @@
-package org.wyldmods.toolutilities.common;
+package org.wyldmods.toolutilities.common.recipe;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;

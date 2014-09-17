@@ -9,7 +9,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 import org.wyldmods.toolutilities.ToolUtilities;
-import org.wyldmods.toolutilities.common.ToolUpgrade;
+import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

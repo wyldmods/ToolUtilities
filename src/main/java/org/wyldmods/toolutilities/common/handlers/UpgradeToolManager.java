@@ -12,7 +12,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 import org.wyldmods.toolutilities.ToolUtilities;
-import org.wyldmods.toolutilities.common.ToolUpgrade;
+import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "ToolUtilities",
+  "name": "Tool Utilities",
+  "description": "Utilities for your tools! 3 by 3 mining, block placement, and more!",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["insaneau, tterrag"],
+  "credits": "KiwiFails for the idea. Rest of wyld and co. for testing and ideas.",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

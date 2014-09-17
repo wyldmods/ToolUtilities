@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
-import org.wyldmods.toolutilities.common.ToolUpgrade;
+import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;

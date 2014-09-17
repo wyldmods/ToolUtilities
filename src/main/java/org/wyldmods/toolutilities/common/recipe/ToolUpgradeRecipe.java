@@ -7,8 +7,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import org.wyldmods.toolutilities.common.ToolUpgrade;
-
 public class ToolUpgradeRecipe
 {
     public final Class<? extends Item> input;
