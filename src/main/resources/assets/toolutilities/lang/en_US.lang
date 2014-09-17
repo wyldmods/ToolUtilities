@@ -9,3 +9,18 @@ toolUtils.upgrade.place.tooltip=Place: Can place blocks and use items
 toolUtils.upgrade.threexone.tooltip=3x1: Mines in a vertical 3 by 1 rectangle
 toolUtils.upgrade.threexthree.tooltip=3x3: Mines in a 3 by 3 square
 toolUtils.upgrade.hoexthree.tooltip=Cuts tall grass in 3 by 3 square
+
+# Config #
+toolUtils.config.title=Tool Utilities Configuration
+
+toolUtils.config.rightclick=Right Click Upgrade Settings
+toolUtils.config.rightclick.tooltip=Settings for the Place upgrade
+
+toolUtils.config.areamining=AOE Mining Upgrade Settings
+toolUtils.config.areamining.tooltip=Settings for the 3x1 and 3x3 upgrades
+
+toolUtils.config.hoearea=Hoe Upgrade Settings
+toolUtils.config.hoearea.tooltip=Settings for the hoe upgrade
+
+toolUtils.config.featuresallowed=Feature Enabling/Disabling
+toolUtils.config.featuresallowed.tooltip=Enable and Disable upgrades globally
