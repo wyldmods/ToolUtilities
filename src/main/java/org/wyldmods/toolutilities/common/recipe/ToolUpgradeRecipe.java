@@ -30,11 +30,20 @@ public class ToolUpgradeRecipe
     {
         addUpgradeRecipe(input, modifier, upgrade, 5);
     }
-
+    
+    public static void addUpgradeRecipe(Class<? extends Item> input, ItemStack modifier, ToolUpgrade upgrade, int cost, boolean configOption)
+    {
+        if (configOption)
+        {
+            addUpgradeRecipe(input, modifier, upgrade, cost);
+        }
+    }
+    
     public static void addUpgradeRecipe(Class<? extends Item> input, ItemStack modifier, ToolUpgrade upgrade, int cost)
     {
         recipes.add(new ToolUpgradeRecipe(input, modifier, upgrade, cost));
     }
+
 
     public static boolean isValidInput(ItemStack input, ItemStack modifier)
     {

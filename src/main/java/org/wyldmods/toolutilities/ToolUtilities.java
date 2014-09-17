@@ -1,10 +1,13 @@
 package org.wyldmods.toolutilities;
 
+import static org.wyldmods.toolutilities.common.Config.*;
+
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
@@ -16,10 +19,10 @@ import org.apache.logging.log4j.Logger;
 import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.ToolUpgrade;
+import org.wyldmods.toolutilities.common.handlers.AOEHoe;
 import org.wyldmods.toolutilities.common.handlers.AOEMining;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
-import org.wyldmods.toolutilities.common.handlers.AOEHoe;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
 import cpw.mods.fml.common.Mod;
@@ -73,25 +76,26 @@ public class ToolUtilities
         nineItem = getStackFromString(Config.nineItem);
         hoeAreaItem = getStackFromString(Config.hoeAreaItem);
 
-        String[] seperatedItems = Config.blacklist.split(",");
+        String[] seperatedItems = blacklist.split(",");
         for (int i = 0; i < seperatedItems.length; i++)
         {
             blacklistedItems.add(getStackFromString(seperatedItems[i]).getItem());
         }
 
         // place
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemTool.class, rightClickItem, ToolUpgrade.PLACE, Config.XPAmount);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemTool.class, rightClickItem, ToolUpgrade.PLACE, XPAmount, allowPlace);
 
         // 3x1
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, areaItem, ToolUpgrade.THREExONE, Config.areaXPAmount);
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, areaItem, ToolUpgrade.THREExONE, Config.areaXPAmount);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Pick);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Shovel);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemAxe.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Axe);
 
         // 3x3
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, nineItem, ToolUpgrade.THREExTHREE, Config.nineXPAmount);
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, nineItem, ToolUpgrade.THREExTHREE, Config.nineXPAmount);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, nineItem, ToolUpgrade.THREExTHREE, nineXPAmount, allow3x3Pick);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, nineItem, ToolUpgrade.THREExTHREE, nineXPAmount, allow3x3Shovel);
         
         //Hoe's in AoE for tall grass
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, Config.hoeAreaXP);
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
     }
 
     private ItemStack getStackFromString(String input)

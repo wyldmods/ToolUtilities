@@ -1,5 +1,8 @@
 package org.wyldmods.toolutilities.common.handlers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -7,6 +10,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -38,50 +42,47 @@ public class AOEMining
             ItemStack current = player.getCurrentEquippedItem();
             if (current != null && !event.world.isRemote)
             {
-                if (current.getItem() instanceof ItemPickaxe || current.getItem() instanceof ItemSpade)
+                if (ToolUpgrade.THREExONE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
                 {
-                    if (ToolUpgrade.THREExONE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+                    MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
+                    if (mop.sideHit != 0 && mop.sideHit != 1)
                     {
-                        MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-                        if (mop.sideHit != 0 && mop.sideHit != 1)
-                        {
-                            int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
-                            mineOutEverything(mineArray, event);
-                        }
+                        int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
+                        mineOutEverything(mineArray, event);
                     }
-                    if (ToolUpgrade.THREExTHREE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+                }
+                if (ToolUpgrade.THREExTHREE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+                {
+                    // 3x3 time!
+                    MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
+                    if (mop == null)
+                        return;
+                    switch (mop.sideHit)
                     {
-                        // 3x3 time!
-                        MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-                        if (mop == null)
-                            return;
-                        switch (mop.sideHit)
-                        {
-                        case 0: // Bottom
-                            int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-                            mineOutEverything(mineArrayBottom, event);
-                            break;
-                        case 1: // Top
-                            int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-                            mineOutEverything(mineArrayTop, event);
-                            break;
-                        case 2: // South
-                            int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-                            mineOutEverything(mineArraySouth, event);
-                            break;
-                        case 3: // North
-                            int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-                            mineOutEverything(mineArrayNorth, event);
-                            break;
-                        case 4: // East
-                            int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-                            mineOutEverything(mineArrayEast, event);
-                            break;
-                        case 5: // West
-                            int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-                            mineOutEverything(mineArrayWest, event);
-                            break;
-                        }
+                    case 0: // Bottom
+                        int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
+                        mineOutEverything(mineArrayBottom, event);
+                        break;
+                    case 1: // Top
+                        int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
+                        mineOutEverything(mineArrayTop, event);
+                        break;
+                    case 2: // South
+                        int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
+                        mineOutEverything(mineArraySouth, event);
+                        break;
+                    case 3: // North
+                        int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
+                        mineOutEverything(mineArrayNorth, event);
+                        break;
+                    case 4: // East
+                        int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
+                        mineOutEverything(mineArrayEast, event);
+                        break;
+                    case 5: // West
+                        int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
+                        mineOutEverything(mineArrayWest, event);
+                        break;
                     }
                 }
             }
@@ -171,6 +172,14 @@ public class AOEMining
         }
     }
 
+    private static Map<Class<? extends ItemTool>, String> toolClasses = new HashMap<Class<? extends ItemTool>, String>();
+    static
+    {
+        toolClasses.put(ItemPickaxe.class, "pickaxe");
+        toolClasses.put(ItemSpade.class, "shovel");
+        toolClasses.put(ItemAxe.class, "axe");
+    }
+
     private boolean canHarvestBlock(EntityPlayer player, Block origBlock, Block block, int meta, int x, int y, int z)
     {
         ItemStack current = player.getCurrentEquippedItem();
@@ -178,15 +187,11 @@ public class AOEMining
         if (current == null)
             return false;
 
-        String toolClass;
-        if (current.getItem() instanceof ItemPickaxe)
-        {
-            toolClass = "pickaxe";
-        }
-        else
-        {
-            toolClass = "shovel";
-        }
+        String toolClass = toolClasses.get(current.getItem().getClass());
+
+        if (toolClass == null)
+            return false;
+
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
         float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
         // It works. It just does.
