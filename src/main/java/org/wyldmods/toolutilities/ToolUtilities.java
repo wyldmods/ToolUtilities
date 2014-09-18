@@ -73,7 +73,11 @@ public class ToolUtilities
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-
+        doConfig();
+    }
+    
+    public void doConfig()
+    {
         rightClickItem = getStackFromString(Config.rightClickItem);
         areaItem = getStackFromString(Config.areaItem);
         logger.info("Column item: " + areaItem.getUnlocalizedName());
@@ -81,11 +85,14 @@ public class ToolUtilities
         hoeAreaItem = getStackFromString(Config.hoeAreaItem);
 
         String[] seperatedItems = blacklist.split(",");
+        blacklistedItems.clear();
         for (int i = 0; i < seperatedItems.length; i++)
         {
             blacklistedItems.add(getStackFromString(seperatedItems[i]).getItem());
         }
 
+        ToolUpgradeRecipe.clear();
+        
         // place
         ToolUpgradeRecipe.addUpgradeRecipe(ItemTool.class, rightClickItem, ToolUpgrade.PLACE, XPAmount, allowPlace);
 
@@ -101,7 +108,7 @@ public class ToolUtilities
         //Hoe's in AoE for tall grass
         ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
     }
-
+    
     private ItemStack getStackFromString(String input)
     {
         ItemStack outputStack;

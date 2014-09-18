@@ -96,6 +96,7 @@ public class Config
         if (config.hasChanged())
         {
             config.save();
+            ToolUtilities.instance.doConfig();
         }
     }
     

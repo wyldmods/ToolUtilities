@@ -142,4 +142,8 @@ public class ToolUpgradeRecipe
         return false;
     }
 
+    public static void clear()
+    {
+        recipes.clear();
+    }
 }
