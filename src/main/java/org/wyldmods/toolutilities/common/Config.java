@@ -83,8 +83,8 @@ public class Config
         enableColumn = config.get(sectionAreaMining, "Enable1x3", true, "Enable 1x3 mining upgrade").getBoolean();
         enableNine = config.get(sectionAreaMining, "Enable3x3", true, "Enable 3x3 mining ugprade").getBoolean();
         noisyBlocks = config.get(sectionAreaMining, "noisyBlock", true, "When AOE blocks are broken, should they play a sound and make particles").getBoolean();
-        speedMult3x1 = config.getFloat("speedMult3x1", sectionAreaMining, 0.8f, 0.01f, 5.0f, "Speed multipler applied to 3x1 tools. To make them mine slower (or faster I guess)");
-        speedMult3x3 = config.getFloat("speedMult3x3", sectionAreaMining, 0.6f, 0.01f, 5.0f, "Speed multipler applied to 3x3 tools. To make them mine slower (or faster I guess)");
+        speedMult3x1 = config.getFloat("speedMult3x1", sectionAreaMining, 0.4f, 0.01f, 5.0f, "Speed multipler applied to 3x1 tools. To make them mine slower (or faster I guess)");
+        speedMult3x3 = config.getFloat("speedMult3x3", sectionAreaMining, 0.2f, 0.01f, 5.0f, "Speed multipler applied to 3x3 tools. To make them mine slower (or faster I guess)");
 
         hoeAreaXP = config.get(sectionHoeArea, "hoeAreaXPRequired", 10, "Number of levels required for Hoe to cut grass in 3x3").getInt();
         hoeAreaItem = config.get(sectionHoeArea, "hoeAreaItem", "minecraft:wheat_seeds", "Item required for Hoe to cut grass in a 3x3").getString();
