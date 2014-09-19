@@ -18,8 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Logger;
 import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
-import org.wyldmods.toolutilities.common.handlers.AOEHoe;
-import org.wyldmods.toolutilities.common.handlers.AOEMining;
+import org.wyldmods.toolutilities.common.handlers.AOEHandler;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
@@ -66,8 +65,7 @@ public class ToolUtilities
 
         MinecraftForge.EVENT_BUS.register(new PlaceItem());
         MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
-        MinecraftForge.EVENT_BUS.register(new AOEMining());
-        MinecraftForge.EVENT_BUS.register(new AOEHoe());
+        MinecraftForge.EVENT_BUS.register(new AOEHandler());
     }
 
     @Mod.EventHandler

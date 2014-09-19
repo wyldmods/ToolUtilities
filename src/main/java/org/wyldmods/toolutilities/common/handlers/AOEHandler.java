@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -21,6 +22,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
@@ -30,8 +32,25 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class AOEMining
+public class AOEHandler
 {
+    @SubscribeEvent
+    public void breakSpeed(BreakSpeed event)
+    {
+        ItemStack stack = event.entityPlayer.getCurrentEquippedItem();
+        if (stack != null)
+        {
+            if (ToolUpgrade.THREExONE.isOn(stack))
+            {
+                event.newSpeed *= Config.speedMult3x1;
+            }
+            if (ToolUpgrade.THREExTHREE.isOn(stack))
+            {
+                event.newSpeed *= Config.speedMult3x3;
+            }
+        }
+    }
+    
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void mineAOE(BreakEvent event)
     {
@@ -42,52 +61,79 @@ public class AOEMining
             ItemStack current = player.getCurrentEquippedItem();
             if (current != null && !event.world.isRemote)
             {
-                if (ToolUpgrade.THREExONE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+                if (canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
                 {
-                    MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-                    if (mop.sideHit != 0 && mop.sideHit != 1)
+                    if (ToolUpgrade.THREExONE.isOn(current))
                     {
-                        int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
-                        mineOutEverything(mineArray, event);
+                        do3x1Mine(event);
+                    }
+
+                    if (ToolUpgrade.THREExTHREE.isOn(current))
+                    {
+                        do3x3Mine(event);
                     }
                 }
-                if (ToolUpgrade.THREExTHREE.isOn(current) && canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
+
+                if (ToolUpgrade.HOExTHREE.isOn(current))
                 {
-                    // 3x3 time!
-                    MovingObjectPosition mop = raytraceFromEntity(event.world, player, false, 4.5D);
-                    if (mop == null)
-                        return;
-                    switch (mop.sideHit)
-                    {
-                    case 0: // Bottom
-                        int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-                        mineOutEverything(mineArrayBottom, event);
-                        break;
-                    case 1: // Top
-                        int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-                        mineOutEverything(mineArrayTop, event);
-                        break;
-                    case 2: // South
-                        int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-                        mineOutEverything(mineArraySouth, event);
-                        break;
-                    case 3: // North
-                        int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-                        mineOutEverything(mineArrayNorth, event);
-                        break;
-                    case 4: // East
-                        int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-                        mineOutEverything(mineArrayEast, event);
-                        break;
-                    case 5: // West
-                        int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-                        mineOutEverything(mineArrayWest, event);
-                        break;
-                    }
+                    do3x3Hoe(event);
                 }
             }
         }
-        return;
+    }
+
+    private void do3x1Mine(BreakEvent event)
+    {
+        MovingObjectPosition mop = raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        if (mop.sideHit != 0 && mop.sideHit != 1)
+        {
+            int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
+            mineOutEverything(mineArray, event);
+        }
+    }
+
+    private void do3x3Mine(BreakEvent event)
+    {
+        // 3x3 time!
+        MovingObjectPosition mop = raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        if (mop == null)
+            return;
+        switch (mop.sideHit)
+        {
+        case 0: // Bottom
+            int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
+            mineOutEverything(mineArrayBottom, event);
+            break;
+        case 1: // Top
+            int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
+            mineOutEverything(mineArrayTop, event);
+            break;
+        case 2: // South
+            int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
+            mineOutEverything(mineArraySouth, event);
+            break;
+        case 3: // North
+            int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
+            mineOutEverything(mineArrayNorth, event);
+            break;
+        case 4: // East
+            int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
+            mineOutEverything(mineArrayEast, event);
+            break;
+        case 5: // West
+            int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
+            mineOutEverything(mineArrayWest, event);
+            break;
+        }
+    }
+
+    private void do3x3Hoe(BreakEvent event)
+    {
+        if (canHoeHarvest(event.block))
+        {
+            int[][] blocksToMine = { { -1, 0, -1 }, { -1, 0, 0 }, { -1, 0, 1 }, { 0, 0, -1 }, { 0, 0, 1 }, { 1, 0, -1 }, { 1, 0, 0 }, { 1, 0, 1 } };
+            mineGrass(blocksToMine, event);
+        }
     }
 
     public void mineOutEverything(int[][] locations, BreakEvent event)
@@ -197,5 +243,40 @@ public class AOEMining
         // It works. It just does.
         return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness > 0 && origBlock
                 .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
+    }
+
+    public void mineGrass(int[][] blocks, BreakEvent event)
+    {
+        EntityPlayer player = event.getPlayer();
+        ItemStack current = player.getCurrentEquippedItem();
+
+        for (int i = 0; i < blocks.length; i++)
+        {
+            Block currentBlock = event.world.getBlock(event.x + blocks[i][0], event.y + blocks[i][1], event.z + blocks[i][2]);
+            int currentMeta = event.world.getBlockMetadata(event.x + blocks[i][0], event.y + blocks[i][1], event.z + blocks[i][2]);
+            if (canHoeHarvest(currentBlock))
+            {
+                mineBlock(event.world, event.x + blocks[i][0], event.y + blocks[i][1], event.z + blocks[i][2], currentMeta, player, currentBlock);
+                current.damageItem(1, player);
+                if (current.getItemDamage() >= current.getMaxDamage())
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    public static Material[] validHoeMaterials = { Material.plants, Material.vine };
+
+    public boolean canHoeHarvest(Block block)
+    {
+        for (Material i : validHoeMaterials)
+        {
+            if (i == block.getMaterial())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
