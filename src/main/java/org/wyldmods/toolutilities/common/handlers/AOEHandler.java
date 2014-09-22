@@ -38,7 +38,7 @@ public class AOEHandler
     public void breakSpeed(BreakSpeed event)
     {
         ItemStack stack = event.entityPlayer.getCurrentEquippedItem();
-        if (stack != null)
+        if (stack != null && !event.entityPlayer.isSneaking() && canHarvestBlock(event.entityPlayer, event.block, event.block, event.metadata, event.x, event.y, event.z))
         {
             if (ToolUpgrade.THREExONE.isOn(stack))
             {
@@ -56,7 +56,7 @@ public class AOEHandler
     {
         int x = event.x, y = event.y, z = event.z;
         EntityPlayer player = event.getPlayer();
-        if (player != null)
+        if (player != null && !player.isSneaking())
         {
             ItemStack current = player.getCurrentEquippedItem();
             if (current != null && !event.world.isRemote)
