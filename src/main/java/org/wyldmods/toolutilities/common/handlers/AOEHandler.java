@@ -11,6 +11,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
@@ -233,7 +234,7 @@ public class AOEHandler
         if (current == null)
             return false;
 
-        String toolClass = toolClasses.get(current.getItem().getClass());
+        String toolClass = getToolClass(current.getItem().getClass());
 
         if (toolClass == null)
             return false;
@@ -241,8 +242,20 @@ public class AOEHandler
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
         float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
         // It works. It just does.
-        return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness > 0 && origBlock
+        return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness >= 0 && origBlock
                 .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
+    }
+    
+    private static String getToolClass(Class<? extends Item> clazz)
+    {
+        for (Class<? extends ItemTool> toolClass : toolClasses.keySet())
+        {
+            if (toolClass.isAssignableFrom(clazz))
+            {
+                return toolClasses.get(toolClass);
+            }
+        }
+        return null;
     }
 
     public void mineGrass(int[][] blocks, BreakEvent event)
