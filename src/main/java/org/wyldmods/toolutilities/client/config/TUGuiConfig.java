@@ -30,6 +30,7 @@ public class TUGuiConfig extends GuiConfig
         list.add(new ConfigElement<ConfigCategory>(getCategory(sectionRightClick)));
         list.add(new ConfigElement<ConfigCategory>(getCategory(sectionAreaMining)));
         list.add(new ConfigElement<ConfigCategory>(getCategory(sectionHoeArea)));
+        list.add(new ConfigElement<ConfigCategory>(getCategory(sectionSword)));
         list.add(new ConfigElement<ConfigCategory>(getCategory(sectionFeatures)));
 
         return list;
