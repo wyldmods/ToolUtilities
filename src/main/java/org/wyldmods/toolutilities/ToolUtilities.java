@@ -12,6 +12,7 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -34,7 +35,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 @Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory")
 public class ToolUtilities
 {
-
     public static final String MODID = "ToolUtilities";
     public static final String LOCALIZING = "toolUtils";
     
@@ -50,6 +50,7 @@ public class ToolUtilities
     public static ItemStack areaItem;
     public static ItemStack nineItem;
     public static ItemStack hoeAreaItem;
+    public static ItemStack swordAreaItem;
 
     public static ArrayList<Item> blacklistedItems = new ArrayList<Item>();
     
@@ -81,6 +82,7 @@ public class ToolUtilities
         logger.info("Column item: " + areaItem.getUnlocalizedName());
         nineItem = getStackFromString(Config.nineItem);
         hoeAreaItem = getStackFromString(Config.hoeAreaItem);
+        swordAreaItem = getStackFromString(Config.swordAreaItem);
 
         String[] seperatedItems = blacklist.split(",");
         blacklistedItems.clear();
@@ -105,6 +107,8 @@ public class ToolUtilities
         
         //Hoe's in AoE for tall grass
         ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
+        
+        ToolUpgradeRecipe.addUpgradeRecipe(ItemSword.class, swordAreaItem, ToolUpgrade.SWORD_AOE, swordAreaXP, allowSwordAOE);
     }
     
     private ItemStack getStackFromString(String input)

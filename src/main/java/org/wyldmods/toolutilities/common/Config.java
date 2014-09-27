@@ -13,6 +13,7 @@ public class Config
     public static final String sectionRightClick = "RightClick";
     public static final String sectionAreaMining = "AreaMining";
     public static final String sectionHoeArea = "HoeArea";
+    public static final String sectionSword = "SwordArea";
     public static final String sectionFeatures = "FeaturesAllowed";
 
     public static int XPAmount;
@@ -32,12 +33,16 @@ public class Config
     public static String hoeAreaItem;
     public static int hoeAreaXP;
     
+    public static String swordAreaItem;
+    public static int swordAreaXP;
+
     public static float speedMult3x1, speedMult3x3;
 
     public static boolean allowPlace;
     public static boolean allow3x1Pick, allow3x1Shovel, allow3x1Axe;
     public static boolean allow3x3Pick, allow3x3Shovel;
     public static boolean allow3x3Hoe;
+    public static boolean allowSwordAOE;
 
     public static Configuration config;
 
@@ -89,6 +94,9 @@ public class Config
         hoeAreaXP = config.get(sectionHoeArea, "hoeAreaXPRequired", 10, "Number of levels required for Hoe to cut grass in 3x3").getInt();
         hoeAreaItem = config.get(sectionHoeArea, "hoeAreaItem", "minecraft:wheat_seeds", "Item required for Hoe to cut grass in a 3x3").getString();
 
+        swordAreaItem = config.get(sectionSword, "swordAreaItem", "minecraft:feather", "Item required for the sword AOE upgrade").getString();
+        swordAreaXP = config.get(sectionSword, "swordAreaXP", 10, "XP required for the sword AOE upgrade").getInt();
+        
         allowPlace = config.get(sectionFeatures, "allowPlace", true).getBoolean();
         allow3x1Pick = config.get(sectionFeatures, "allow3x1Pick", true).getBoolean();
         allow3x1Shovel = config.get(sectionFeatures, "allow3x1Shovel", true).getBoolean();
@@ -96,7 +104,8 @@ public class Config
         allow3x3Pick = config.get(sectionFeatures, "allow3x3Pick", true).getBoolean();
         allow3x3Shovel = config.get(sectionFeatures, "allow3x3Shovel", true).getBoolean();
         allow3x3Hoe = config.get(sectionFeatures, "allow3x3Hoe", true).getBoolean();
-
+        allowSwordAOE = config.get(sectionFeatures, "allowSwordAOE", true).getBoolean();
+        
         if (config.hasChanged())
         {
             config.save();

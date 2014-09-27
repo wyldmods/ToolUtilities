@@ -1,6 +1,7 @@
 package org.wyldmods.toolutilities.common.handlers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -9,6 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -19,15 +22,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
+
+import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
@@ -35,6 +44,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class AOEHandler
 {
+    /* ==== Mining ==== */
+
     @SubscribeEvent
     public void breakSpeed(BreakSpeed event)
     {
@@ -51,7 +62,7 @@ public class AOEHandler
             }
         }
     }
-    
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void mineAOE(BreakEvent event)
     {
@@ -245,7 +256,7 @@ public class AOEHandler
         return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness >= 0 && origBlock
                 .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
     }
-    
+
     private static String getToolClass(Class<? extends Item> clazz)
     {
         for (Class<? extends ItemTool> toolClass : toolClasses.keySet())
@@ -291,5 +302,46 @@ public class AOEHandler
             }
         }
         return false;
+    }
+
+    /* ==== Sword ==== */
+
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent
+    public void onAttackEntity(AttackEntityEvent event)
+    {
+        if (!event.entityPlayer.worldObj.isRemote)
+        {
+            EntityPlayer fakePlayer = FakePlayerFactory.get((WorldServer) event.entityPlayer.worldObj, new GameProfile(null, "ToolUtils-SwordDummy"));
+            if (event.entityPlayer == fakePlayer) return;
+            ItemStack current = event.entityPlayer.getCurrentEquippedItem();
+            if (current != null && ToolUpgrade.SWORD_AOE.isOn(current))
+            {
+                copy(event.entityPlayer, fakePlayer);
+                AxisAlignedBB bb = event.target.boundingBox;
+                bb = bb.expand(2, 2, 2);
+                List<EntityLivingBase> list = event.entity.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, bb);
+                for (EntityLivingBase entity : list)
+                {
+                    if (entity != event.target && entity != event.entityPlayer)
+                    {
+                        fakePlayer.attackTargetEntityWithCurrentItem(entity);
+                        current.getItem().hitEntity(current, event.entityPlayer, entity);
+                    }
+                }
+                
+                fakePlayer.setLocationAndAngles(0, 0, 0, 0, 0);
+            }
+        }
+    }
+    
+    private static void copy(EntityPlayer from, EntityPlayer to)
+    {
+        to.setSprinting(from.isSprinting());
+        to.setLocationAndAngles(from.posX, from.posY, from.posZ, from.rotationYaw, from.rotationPitch);
+        to.fallDistance = from.fallDistance;
+        to.onGround = from.onGround;
+        to.inventory.mainInventory[to.inventory.currentItem] = from.getCurrentEquippedItem();
+        to.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(from.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
     }
 }

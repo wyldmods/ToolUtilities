@@ -9,7 +9,7 @@ import org.wyldmods.toolutilities.common.util.NBTHelper;
 
 public enum ToolUpgrade
 {
-    PLACE, THREExONE(2), THREExTHREE(1), HOExTHREE;
+    PLACE, THREExONE(2), THREExTHREE(1), HOExTHREE, SWORD_AOE;
     
     static
     {
