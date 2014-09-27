@@ -9,7 +9,7 @@ toolUtils.upgrade.place.tooltip=Place: Can place blocks and use items
 toolUtils.upgrade.threexone.tooltip=3x1: Mines in a vertical 3 by 1 rectangle
 toolUtils.upgrade.threexthree.tooltip=3x3: Mines in a 3 by 3 square
 toolUtils.upgrade.hoexthree.tooltip=AOE: Cuts tall grass in 3 by 3 square
-toolUtils.upgrade.sword_aoe.tooltip=AOE: Hits all entities in a range around the target entity.
+toolUtils.upgrade.sword_aoe.tooltip=AOE: Hits other entities near the target.
 
 # Config #
 toolUtils.config.title=Tool Utilities Configuration
