@@ -35,6 +35,7 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
+import org.wyldmods.toolutilities.common.util.DirectionHelper;
 
 import com.mojang.authlib.GameProfile;
 
@@ -96,55 +97,35 @@ public class AOEHandler
 
     private void do3x1Mine(BreakEvent event)
     {
-        MovingObjectPosition mop = raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        MovingObjectPosition mop = DirectionHelper.raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
         if (mop.sideHit != 0 && mop.sideHit != 1)
         {
             int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
             mineOutEverything(mineArray, event);
+        }
+        else //Hit the top or bottom.
+        {
+        	int playerDir = DirectionHelper.getPlayerDirection(event.getPlayer());
+        	mineOutEverything(DirectionHelper.get1x3MiningCoordinatesForTopAndBottom(playerDir), event);
         }
     }
 
     private void do3x3Mine(BreakEvent event)
     {
         // 3x3 time!
-        MovingObjectPosition mop = raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        MovingObjectPosition mop = DirectionHelper.raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
         if (mop == null)
             return;
-        switch (mop.sideHit)
-        {
-        case 0: // Bottom
-            int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-            mineOutEverything(mineArrayBottom, event);
-            break;
-        case 1: // Top
-            int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-            mineOutEverything(mineArrayTop, event);
-            break;
-        case 2: // South
-            int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-            mineOutEverything(mineArraySouth, event);
-            break;
-        case 3: // North
-            int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-            mineOutEverything(mineArrayNorth, event);
-            break;
-        case 4: // East
-            int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-            mineOutEverything(mineArrayEast, event);
-            break;
-        case 5: // West
-            int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-            mineOutEverything(mineArrayWest, event);
-            break;
-        }
+        
+        mineOutEverything(DirectionHelper.get3x3MiningCoordinates(mop), event);
+        
     }
 
     private void do3x3Hoe(BreakEvent event)
     {
         if (canHoeHarvest(event.block))
         {
-            int[][] blocksToMine = { { -1, 0, -1 }, { -1, 0, 0 }, { -1, 0, 1 }, { 0, 0, -1 }, { 0, 0, 1 }, { 1, 0, -1 }, { 1, 0, 0 }, { 1, 0, 1 } };
-            mineGrass(blocksToMine, event);
+            mineGrass(DirectionHelper.mineArrayTop, event);
         }
     }
 
@@ -171,31 +152,7 @@ public class AOEHandler
         }
     }
 
-    public static MovingObjectPosition raytraceFromEntity(World world, Entity player, boolean par3, double range)
-    {	// 100% borrowed from Tinkers Construct (CC0 license).
-        float f = 1.0F;
-        float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
-        float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
-        double d0 = player.prevPosX + (player.posX - player.prevPosX) * (double) f;
-        double d1 = player.prevPosY + (player.posY - player.prevPosY) * (double) f;
-        if (!world.isRemote && player instanceof EntityPlayer)
-            d1 += 1.62D;
-        double d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * (double) f;
-        Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
-        float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
-        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
-        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
-        float f6 = MathHelper.sin(-f1 * 0.017453292F);
-        float f7 = f4 * f5;
-        float f8 = f3 * f5;
-        double d3 = range;
-        if (player instanceof EntityPlayerMP)
-        {
-            d3 = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
-        }
-        Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-        return world.func_147447_a(vec3, vec31, par3, !par3, par3);
-    }
+    
 
     public void mineBlock(World world, int x, int y, int z, int meta, EntityPlayer player, Block block)
     {
