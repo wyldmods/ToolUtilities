@@ -1,0 +1,30 @@
+
+# Tooltips #
+toolUtils.tooltip.upgradesOn=Текущие улучшения:
+toolUtils.tooltip.upgradesPossible=Возможные улучшения:
+toolUtils.tooltip.pressShift=Нажмите %sShift%s для информации об улучшениях
+toolUtils.tooltip.pressControl=Нажмите %sControl%s для информации о предметах
+toolUtils.tooltip.requiredItem=Требуются предметы:
+toolUtils.upgrade.place.tooltip=Размещение: Может размещать блоки и использовать предметы
+toolUtils.upgrade.threexone.tooltip=3x1: Добывает Ресурсы в прямоугольнике 3 на 1
+toolUtils.upgrade.threexthree.tooltip=3x3: Добывает ресурсы в квадрате 3 на 3
+toolUtils.upgrade.hoexthree.tooltip=AOE: Собирает растения в квадрате 3 на 3
+toolUtils.upgrade.sword_aoe.tooltip=AOE: Поражает других существ рядом с целью.
+
+# Config #
+toolUtils.config.title=Настройки Tool Utilities
+
+toolUtils.config.rightclick=Настройки улучшений, активируемых ПКМ
+toolUtils.config.rightclick.tooltip=Настройки для улучшения "Размещение"
+
+toolUtils.config.areamining=Улучшение "AOE Добыча"
+toolUtils.config.areamining.tooltip=Настройки для улучшений 3x1 и 3x3
+
+toolUtils.config.hoearea=Улучшение мотыги
+toolUtils.config.hoearea.tooltip=Настройки для улучшения мотыги
+
+toolUtils.config.swordarea=Улучшение мечей
+toolUtils.config.swordarea.tooltip=Настройки для улучшения мечей
+
+toolUtils.config.featuresallowed=Включение/Отключение возможностей
+toolUtils.config.featuresallowed.tooltip=Глобальное отключение или включение улучшений
