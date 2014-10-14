@@ -9,11 +9,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
@@ -23,9 +21,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -34,12 +30,14 @@ import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
+import org.wyldmods.toolutilities.common.compat.MekanismCompat;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.util.DirectionHelper;
 
 import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -74,6 +72,7 @@ public class AOEHandler
             ItemStack current = player.getCurrentEquippedItem();
             if (current != null && !event.world.isRemote)
             {
+            	System.out.println(canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z));
                 if (canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
                 {
                     if (ToolUpgrade.THREExONE.isOn(current))
@@ -193,22 +192,26 @@ public class AOEHandler
         toolClasses.put(ItemPickaxe.class, "pickaxe");
         toolClasses.put(ItemSpade.class, "shovel");
         toolClasses.put(ItemAxe.class, "axe");
+        
+        if (Loader.isModLoaded("MekanismTools") && Config.mekanismModule)
+        {
+        	toolClasses = MekanismCompat.addMekanismToolToClasses(toolClasses);
+        }
     }
 
     private boolean canHarvestBlock(EntityPlayer player, Block origBlock, Block block, int meta, int x, int y, int z)
     {
         ItemStack current = player.getCurrentEquippedItem();
-
         if (current == null)
             return false;
 
         String toolClass = getToolClass(current.getItem().getClass());
-
         if (toolClass == null)
             return false;
 
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
         float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
+        System.out.println(((ItemTool) current.getItem()).getHarvestLevel(current, toolClass));
         // It works. It just does.
         return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness >= 0 && origBlock
                 .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);
