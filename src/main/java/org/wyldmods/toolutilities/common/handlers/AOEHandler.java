@@ -326,7 +326,7 @@ public class AOEHandler
                     if (entity != event.target && entity != event.entityPlayer)
                     {
                         fakePlayer.attackTargetEntityWithCurrentItem(entity);
-                        current.getItem().hitEntity(current, event.entityPlayer, entity);
+                        current.getItem().hitEntity(current, entity, event.entityPlayer);
                     }
                 }
                 
