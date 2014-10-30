@@ -9,11 +9,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
@@ -23,9 +21,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -34,11 +30,14 @@ import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import org.wyldmods.toolutilities.common.Config;
+import org.wyldmods.toolutilities.common.compat.MekanismCompat;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
+import org.wyldmods.toolutilities.common.util.DirectionHelper;
 
 import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -73,6 +72,7 @@ public class AOEHandler
             ItemStack current = player.getCurrentEquippedItem();
             if (current != null && !event.world.isRemote)
             {
+            	System.out.println(canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z));
                 if (canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
                 {
                     if (ToolUpgrade.THREExONE.isOn(current))
@@ -96,55 +96,35 @@ public class AOEHandler
 
     private void do3x1Mine(BreakEvent event)
     {
-        MovingObjectPosition mop = raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        MovingObjectPosition mop = DirectionHelper.raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
         if (mop.sideHit != 0 && mop.sideHit != 1)
         {
             int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
             mineOutEverything(mineArray, event);
+        }
+        else //Hit the top or bottom.
+        {
+        	int playerDir = DirectionHelper.getPlayerDirection(event.getPlayer());
+        	mineOutEverything(DirectionHelper.get1x3MiningCoordinatesForTopAndBottom(playerDir), event);
         }
     }
 
     private void do3x3Mine(BreakEvent event)
     {
         // 3x3 time!
-        MovingObjectPosition mop = raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        MovingObjectPosition mop = DirectionHelper.raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
         if (mop == null)
             return;
-        switch (mop.sideHit)
-        {
-        case 0: // Bottom
-            int[][] mineArrayBottom = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-            mineOutEverything(mineArrayBottom, event);
-            break;
-        case 1: // Top
-            int[][] mineArrayTop = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, -1 }, { 0, 0, 1 }, { 0, 0, -1 }, { -1, 0, 1 }, { -1, 0, 0 }, { -1, 0, -1 } };
-            mineOutEverything(mineArrayTop, event);
-            break;
-        case 2: // South
-            int[][] mineArraySouth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-            mineOutEverything(mineArraySouth, event);
-            break;
-        case 3: // North
-            int[][] mineArrayNorth = { { -1, 1, 0 }, { -1, 0, 0 }, { -1, -1, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 1, 1, 0 }, { 1, 0, 0 }, { 1, -1, 0 } };
-            mineOutEverything(mineArrayNorth, event);
-            break;
-        case 4: // East
-            int[][] mineArrayEast = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-            mineOutEverything(mineArrayEast, event);
-            break;
-        case 5: // West
-            int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
-            mineOutEverything(mineArrayWest, event);
-            break;
-        }
+        
+        mineOutEverything(DirectionHelper.get3x3MiningCoordinates(mop), event);
+        
     }
 
     private void do3x3Hoe(BreakEvent event)
     {
         if (canHoeHarvest(event.block))
         {
-            int[][] blocksToMine = { { -1, 0, -1 }, { -1, 0, 0 }, { -1, 0, 1 }, { 0, 0, -1 }, { 0, 0, 1 }, { 1, 0, -1 }, { 1, 0, 0 }, { 1, 0, 1 } };
-            mineGrass(blocksToMine, event);
+            mineGrass(DirectionHelper.mineArrayTop, event);
         }
     }
 
@@ -171,31 +151,7 @@ public class AOEHandler
         }
     }
 
-    public static MovingObjectPosition raytraceFromEntity(World world, Entity player, boolean par3, double range)
-    {	// 100% borrowed from Tinkers Construct (CC0 license).
-        float f = 1.0F;
-        float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
-        float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
-        double d0 = player.prevPosX + (player.posX - player.prevPosX) * (double) f;
-        double d1 = player.prevPosY + (player.posY - player.prevPosY) * (double) f;
-        if (!world.isRemote && player instanceof EntityPlayer)
-            d1 += 1.62D;
-        double d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * (double) f;
-        Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
-        float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
-        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
-        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
-        float f6 = MathHelper.sin(-f1 * 0.017453292F);
-        float f7 = f4 * f5;
-        float f8 = f3 * f5;
-        double d3 = range;
-        if (player instanceof EntityPlayerMP)
-        {
-            d3 = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
-        }
-        Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-        return world.func_147447_a(vec3, vec31, par3, !par3, par3);
-    }
+    
 
     public void mineBlock(World world, int x, int y, int z, int meta, EntityPlayer player, Block block)
     {
@@ -236,22 +192,26 @@ public class AOEHandler
         toolClasses.put(ItemPickaxe.class, "pickaxe");
         toolClasses.put(ItemSpade.class, "shovel");
         toolClasses.put(ItemAxe.class, "axe");
+        
+        if (Loader.isModLoaded("MekanismTools") && Config.mekanismModule)
+        {
+        	toolClasses = MekanismCompat.addMekanismToolToClasses(toolClasses);
+        }
     }
 
     private boolean canHarvestBlock(EntityPlayer player, Block origBlock, Block block, int meta, int x, int y, int z)
     {
         ItemStack current = player.getCurrentEquippedItem();
-
         if (current == null)
             return false;
 
         String toolClass = getToolClass(current.getItem().getClass());
-
         if (toolClass == null)
             return false;
 
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
         float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
+        System.out.println(((ItemTool) current.getItem()).getHarvestLevel(current, toolClass));
         // It works. It just does.
         return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness >= 0 && origBlock
                 .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);

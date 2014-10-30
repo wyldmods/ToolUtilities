@@ -19,6 +19,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Logger;
 import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
+import org.wyldmods.toolutilities.common.compat.MekanismCompat;
 import org.wyldmods.toolutilities.common.handlers.AOEHandler;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
@@ -26,137 +27,143 @@ import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory")
+@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory", dependencies="after:MekanismTools")
 public class ToolUtilities
 {
-    public static final String MODID = "ToolUtilities";
-    public static final String LOCALIZING = "toolUtils";
-    
-    private Logger logger;
+	public static final String MODID = "ToolUtilities";
+	public static final String LOCALIZING = "toolUtils";
 
-    @Mod.Instance(MODID)
-    public static ToolUtilities instance;
+	private Logger logger;
 
-    @SidedProxy(clientSide = "org.wyldmods.toolutilities.client.ClientProxy", serverSide = "org.wyldmods.toolutilities.common.CommonProxy")
-    public static CommonProxy proxy;
+	@Mod.Instance(MODID)
+	public static ToolUtilities instance;
 
-    public static ItemStack rightClickItem;
-    public static ItemStack areaItem;
-    public static ItemStack nineItem;
-    public static ItemStack hoeAreaItem;
-    public static ItemStack swordAreaItem;
+	@SidedProxy(clientSide = "org.wyldmods.toolutilities.client.ClientProxy", serverSide = "org.wyldmods.toolutilities.common.CommonProxy")
+	public static CommonProxy proxy;
 
-    public static ArrayList<Item> blacklistedItems = new ArrayList<Item>();
-    
-    public static Config configHandler;
+	public static ItemStack rightClickItem;
+	public static ItemStack areaItem;
+	public static ItemStack nineItem;
+	public static ItemStack hoeAreaItem;
+	public static ItemStack swordAreaItem;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        logger = event.getModLog();
+	public static ArrayList<Item> blacklistedItems = new ArrayList<Item>();
 
-        configHandler = Config.init(event.getSuggestedConfigurationFile());
-        FMLCommonHandler.instance().bus().register(configHandler);
+	public static Config configHandler;
 
-        MinecraftForge.EVENT_BUS.register(new PlaceItem());
-        MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
-        MinecraftForge.EVENT_BUS.register(new AOEHandler());
-    }
+	@Mod.EventHandler
+	public void preInit(FMLPreInitializationEvent event)
+	{
+		logger = event.getModLog();
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-        doConfig();
-    }
-    
-    public void doConfig()
-    {
-        rightClickItem = getStackFromString(Config.rightClickItem);
-        areaItem = getStackFromString(Config.areaItem);
-        logger.info("Column item: " + areaItem.getUnlocalizedName());
-        nineItem = getStackFromString(Config.nineItem);
-        hoeAreaItem = getStackFromString(Config.hoeAreaItem);
-        swordAreaItem = getStackFromString(Config.swordAreaItem);
+		configHandler = Config.init(event.getSuggestedConfigurationFile());
+		FMLCommonHandler.instance().bus().register(configHandler);
 
-        String[] seperatedItems = blacklist.split(",");
-        blacklistedItems.clear();
-        for (int i = 0; i < seperatedItems.length; i++)
-        {
-            blacklistedItems.add(getStackFromString(seperatedItems[i]).getItem());
-        }
+		MinecraftForge.EVENT_BUS.register(new PlaceItem());
+		MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
+		MinecraftForge.EVENT_BUS.register(new AOEHandler());
+	}
 
-        ToolUpgradeRecipe.clear();
-        
-        // place
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemTool.class, rightClickItem, ToolUpgrade.PLACE, XPAmount, allowPlace);
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent event)
+	{
+		doConfig();
 
-        // 3x1
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Pick);
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Shovel);
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemAxe.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Axe);
+		if (Loader.isModLoaded("MekanismTools") && Config.mekanismModule)
+		{
+			MekanismCompat.addMekanismRecipes();
+		}
+	}
 
-        // 3x3
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, nineItem, ToolUpgrade.THREExTHREE, nineXPAmount, allow3x3Pick);
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, nineItem, ToolUpgrade.THREExTHREE, nineXPAmount, allow3x3Shovel);
-        
-        //Hoe's in AoE for tall grass
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
-        
-        ToolUpgradeRecipe.addUpgradeRecipe(ItemSword.class, swordAreaItem, ToolUpgrade.SWORD_AOE, swordAreaXP, allowSwordAOE);
-    }
-    
-    private ItemStack getStackFromString(String input)
-    {
-        ItemStack outputStack;
+	public void doConfig()
+	{
+		rightClickItem = getStackFromString(Config.rightClickItem);
+		areaItem = getStackFromString(Config.areaItem);
+		logger.info("Column item: " + areaItem.getUnlocalizedName());
+		nineItem = getStackFromString(Config.nineItem);
+		hoeAreaItem = getStackFromString(Config.hoeAreaItem);
+		swordAreaItem = getStackFromString(Config.swordAreaItem);
 
-        String[] info = input.split(":");
-        if (info.length < 2)
-        {
-            logger.info("Issue with " + input + ". Format: modid:item:damage. Reverting to default.");
-            outputStack = new ItemStack(Items.water_bucket, 1);
-        }
-        else
-        {
-            Item possible = GameRegistry.findItem(info[0], info[1]);
-            if (possible == null)
-            {
-                // Try block instead
-                Block possibleBlock = GameRegistry.findBlock(info[0], info[1]);
-                if (possibleBlock == null)
-                {
-                    logger.info("Issue(2) with " + input + ". Format: modid:item:damage. Reverting to default.");
-                    outputStack = new ItemStack(Items.water_bucket, 1);
-                }
-                else
-                {
-                    if (info.length == 3)
-                    {
-                        outputStack = new ItemStack(possibleBlock, 1, Integer.parseInt(info[2]));
-                    }
-                    else
-                    {
-                        outputStack = new ItemStack(possibleBlock, 1);
-                    }
-                }
-            }
-            else
-            {
-                if (info.length == 3)
-                {
-                    outputStack = new ItemStack(possible, 1, Integer.parseInt(info[2]));
-                }
-                else
-                {
-                    outputStack = new ItemStack(possible, 1);
-                }
-            }
-        }
-        return outputStack;
-    }
+		String[] seperatedItems = blacklist.split(",");
+		blacklistedItems.clear();
+		for (int i = 0; i < seperatedItems.length; i++)
+		{
+			blacklistedItems.add(getStackFromString(seperatedItems[i]).getItem());
+		}
+
+		ToolUpgradeRecipe.clear();
+
+		// place
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemTool.class, rightClickItem, ToolUpgrade.PLACE, XPAmount, allowPlace);
+
+		// 3x1
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Pick);
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Shovel);
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemAxe.class, areaItem, ToolUpgrade.THREExONE, areaXPAmount, allow3x1Axe);
+
+		// 3x3
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, nineItem, ToolUpgrade.THREExTHREE, nineXPAmount, allow3x3Pick);
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemSpade.class, nineItem, ToolUpgrade.THREExTHREE, nineXPAmount, allow3x3Shovel);
+
+		//Hoe's in AoE for tall grass
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
+
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemSword.class, swordAreaItem, ToolUpgrade.SWORD_AOE, swordAreaXP, allowSwordAOE);
+	}
+
+	private ItemStack getStackFromString(String input)
+	{
+		ItemStack outputStack;
+
+		String[] info = input.split(":");
+		if (info.length < 2)
+		{
+			logger.info("Issue with " + input + ". Format: modid:item:damage. Reverting to default.");
+			outputStack = new ItemStack(Items.water_bucket, 1);
+		}
+		else
+		{
+			Item possible = GameRegistry.findItem(info[0], info[1]);
+			if (possible == null)
+			{
+				// Try block instead
+				Block possibleBlock = GameRegistry.findBlock(info[0], info[1]);
+				if (possibleBlock == null)
+				{
+					logger.info("Issue(2) with " + input + ". Format: modid:item:damage. Reverting to default.");
+					outputStack = new ItemStack(Items.water_bucket, 1);
+				}
+				else
+				{
+					if (info.length == 3)
+					{
+						outputStack = new ItemStack(possibleBlock, 1, Integer.parseInt(info[2]));
+					}
+					else
+					{
+						outputStack = new ItemStack(possibleBlock, 1);
+					}
+				}
+			}
+			else
+			{
+				if (info.length == 3)
+				{
+					outputStack = new ItemStack(possible, 1, Integer.parseInt(info[2]));
+				}
+				else
+				{
+					outputStack = new ItemStack(possible, 1);
+				}
+			}
+		}
+		return outputStack;
+	}
 }

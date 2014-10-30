@@ -15,6 +15,7 @@ public class Config
     public static final String sectionHoeArea = "HoeArea";
     public static final String sectionSword = "SwordArea";
     public static final String sectionFeatures = "FeaturesAllowed";
+    public static final String sectionModules = "Modules";
 
     public static int XPAmount;
     public static String rightClickItem;
@@ -43,6 +44,9 @@ public class Config
     public static boolean allow3x3Pick, allow3x3Shovel;
     public static boolean allow3x3Hoe;
     public static boolean allowSwordAOE;
+    
+    public static boolean mekanismModule;
+    public static boolean allowPaxelUpgrades;
 
     public static Configuration config;
 
@@ -105,6 +109,10 @@ public class Config
         allow3x3Shovel = config.get(sectionFeatures, "allow3x3Shovel", true).getBoolean();
         allow3x3Hoe = config.get(sectionFeatures, "allow3x3Hoe", true).getBoolean();
         allowSwordAOE = config.get(sectionFeatures, "allowSwordAOE", true).getBoolean();
+        
+        mekanismModule = config.get(sectionModules, "mekanism", true).getBoolean();
+        allowPaxelUpgrades = config.get(sectionModules,"mekanismPaxel", true, "Allow Mekanism Paxels to receive upgrades").getBoolean();
+        
         
         if (config.hasChanged())
         {
