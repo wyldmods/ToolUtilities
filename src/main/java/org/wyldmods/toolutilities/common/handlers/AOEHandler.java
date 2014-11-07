@@ -72,7 +72,7 @@ public class AOEHandler
             ItemStack current = player.getCurrentEquippedItem();
             if (current != null && !event.world.isRemote)
             {
-            	System.out.println(canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z));
+            	
                 if (canHarvestBlock(player, event.block, event.block, event.blockMetadata, x, y, z))
                 {
                     if (ToolUpgrade.THREExONE.isOn(current))
@@ -211,7 +211,7 @@ public class AOEHandler
 
         float hardness = block.getBlockHardness(player.worldObj, x, y, z);
         float digSpeed = ((ItemTool) current.getItem()).getDigSpeed(current, block, meta);
-        System.out.println(((ItemTool) current.getItem()).getHarvestLevel(current, toolClass));
+       
         // It works. It just does.
         return (digSpeed > 1.0F && block.getHarvestLevel(meta) <= ((ItemTool) current.getItem()).getHarvestLevel(current, toolClass) && hardness >= 0 && origBlock
                 .getBlockHardness(player.worldObj, x, y, z) >= hardness - 1.5);

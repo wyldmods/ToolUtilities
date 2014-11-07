@@ -50,7 +50,7 @@ public class PlaceItem
                 // Inspiration from TiC and TorchTools here
                 EntityPlayerMP playerMP = (EntityPlayerMP) event.entityPlayer;
                 
-                System.out.println(canUseItem(useStack));
+                
                 // Use item
                 if (canUseItem(useStack))
                 {
