@@ -116,6 +116,12 @@ public class ToolUtilities
 		ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
 
 		ToolUpgradeRecipe.addUpgradeRecipe(ItemSword.class, swordAreaItem, ToolUpgrade.SWORD_AOE, swordAreaXP, allowSwordAOE);
+		
+		doBlacklist(Config.blacklistPlace,ToolUpgrade.PLACE);
+		doBlacklist(Config.blacklist3x1,ToolUpgrade.THREExONE);
+		doBlacklist(Config.blacklist3x3,ToolUpgrade.THREExTHREE);
+		doBlacklist(Config.blacklistHoe,ToolUpgrade.HOExTHREE);
+		doBlacklist(Config.blacklistSword,ToolUpgrade.SWORD_AOE);
 	}
 
 	private ItemStack getStackFromString(String input)
@@ -165,5 +171,13 @@ public class ToolUtilities
 			}
 		}
 		return outputStack;
+	}
+	
+	private void doBlacklist(String[] input, ToolUpgrade upgrade)
+	{
+		for (String s : input)
+		{
+			upgrade.addToolBlacklist(getStackFromString(s).getUnlocalizedName());
+		}
 	}
 }

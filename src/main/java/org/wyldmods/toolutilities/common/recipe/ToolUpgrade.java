@@ -20,11 +20,13 @@ public enum ToolUpgrade
     private int[] prereqs;
     private int[] blacklist;
     private String tooltip;
+    private String[] toolBlacklist;
 
     ToolUpgrade(int... blacklist)
     {
         this.blacklist = new int[0];
         this.prereqs = new int[0];
+        this.toolBlacklist = new String[0];
         
         for (int i : blacklist)
         {
@@ -128,5 +130,15 @@ public enum ToolUpgrade
             }
         }
         return ret;
+    }
+    
+    public String[] getToolBlacklist()
+    {
+    	return this.toolBlacklist;
+    }
+    
+    public void addToolBlacklist(String tool)
+    {
+    	this.toolBlacklist=ArrayUtils.add(this.toolBlacklist, tool);
     }
 }

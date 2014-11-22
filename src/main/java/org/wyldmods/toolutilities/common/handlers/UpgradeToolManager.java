@@ -15,6 +15,8 @@ import org.wyldmods.toolutilities.ToolUtilities;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
+import scala.actors.threadpool.Arrays;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -101,7 +103,7 @@ public class UpgradeToolManager
         ToolUpgrade[] upgrades = new ToolUpgrade[0];
         for (ToolUpgrade upgrade : ToolUpgrade.values())
         {
-            if (upgrade.hasPreReqs(stack) && !upgrade.isOn(stack) && ToolUpgradeRecipe.recipeExistsFor(stack, upgrade))
+            if (upgrade.hasPreReqs(stack) && !upgrade.isOn(stack) && ToolUpgradeRecipe.recipeExistsFor(stack, upgrade) && !Arrays.asList(upgrade.getToolBlacklist()).contains(stack.getItem().getUnlocalizedName()))
             {
                 upgrades = ArrayUtils.add(upgrades, upgrade);
             }

@@ -16,6 +16,7 @@ public class Config
     public static final String sectionSword = "SwordArea";
     public static final String sectionFeatures = "FeaturesAllowed";
     public static final String sectionModules = "Modules";
+    public static final String sectionBlacklist = "Blacklist";
 
     public static int XPAmount;
     public static String rightClickItem;
@@ -47,6 +48,12 @@ public class Config
     
     public static boolean mekanismModule;
     public static boolean allowPaxelUpgrades;
+    
+    public static String[] blacklistPlace;
+    public static String[] blacklist3x1;
+    public static String[] blacklist3x3;
+    public static String[] blacklistHoe;
+    public static String[] blacklistSword;
 
     public static Configuration config;
 
@@ -113,6 +120,11 @@ public class Config
         mekanismModule = config.get(sectionModules, "mekanism", true).getBoolean();
         allowPaxelUpgrades = config.get(sectionModules,"mekanismPaxel", true, "Allow Mekanism Paxels to receive upgrades").getBoolean();
         
+        blacklistPlace = config.get(sectionRightClick,"toolBlacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
+        blacklist3x1 = config.get(sectionAreaMining,"3x1blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
+        blacklist3x3 = config.get(sectionAreaMining,"3x3blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
+        blacklistHoe = config.get(sectionHoeArea,"blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
+        blacklistSword = config.get(sectionSword,"blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
         
         if (config.hasChanged())
         {

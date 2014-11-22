@@ -3,6 +3,8 @@ package org.wyldmods.toolutilities.common.recipe;
 import java.util.ArrayList;
 import java.util.List;
 
+import scala.actors.threadpool.Arrays;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -124,7 +126,7 @@ public class ToolUpgradeRecipe
             int damage = recipe.modifier.getItemDamage();
             if ((damage == OreDictionary.WILDCARD_VALUE || damage == modifier.getItemDamage()) && recipe.modifier.getItem() == modifier.getItem() && recipe.modifier.stackSize == modifier.stackSize)
             {
-                return !recipe.upgrade.isOn(input) && recipe.upgrade.hasPreReqs(input);
+                return !recipe.upgrade.isOn(input) && recipe.upgrade.hasPreReqs(input) && !Arrays.asList(recipe.upgrade.getToolBlacklist()).contains(input.getItem().getUnlocalizedName());
             }
         }
         return false;
