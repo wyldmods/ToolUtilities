@@ -5,6 +5,7 @@ toolUtils.tooltip.upgradesPossible=Possible Upgrades:
 toolUtils.tooltip.pressShift=Press %sShift%s for upgrade info
 toolUtils.tooltip.pressControl=Press %sControl%s for ingredient info
 toolUtils.tooltip.requiredItem=Required Item:
+toolUtils.tooltip.upgradeInstructions=Apply in an anvil
 toolUtils.upgrade.place.tooltip=Place: Can place blocks and use items
 toolUtils.upgrade.threexone.tooltip=3x1: Mines in a vertical 3 by 1 rectangle
 toolUtils.upgrade.threexthree.tooltip=3x3: Mines in a 3 by 3 square

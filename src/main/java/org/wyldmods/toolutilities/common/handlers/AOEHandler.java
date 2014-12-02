@@ -97,6 +97,12 @@ public class AOEHandler
     private void do3x1Mine(BreakEvent event)
     {
         MovingObjectPosition mop = DirectionHelper.raytraceFromEntity(event.world, event.getPlayer(), false, 4.5D);
+        
+        if (mop == null) // something is NaN, bail out!
+        {
+            return;
+        }
+        
         if (mop.sideHit != 0 && mop.sideHit != 1)
         {
             int[][] mineArray = { { 0, 1, 0 }, { 0, -1, 0 } };
