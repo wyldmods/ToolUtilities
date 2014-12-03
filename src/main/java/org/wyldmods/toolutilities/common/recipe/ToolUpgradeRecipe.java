@@ -1,9 +1,8 @@
 package org.wyldmods.toolutilities.common.recipe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import scala.actors.threadpool.Arrays;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
