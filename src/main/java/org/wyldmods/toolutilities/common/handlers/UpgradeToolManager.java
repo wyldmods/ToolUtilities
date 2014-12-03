@@ -1,6 +1,7 @@
 package org.wyldmods.toolutilities.common.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -14,8 +15,6 @@ import org.lwjgl.input.Keyboard;
 import org.wyldmods.toolutilities.ToolUtilities;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
-
-import scala.actors.threadpool.Arrays;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
