@@ -85,6 +85,8 @@ public class UpgradeToolManager
                                     + ToolUpgradeRecipe.getModifierFor(event.itemStack, upgrade).getDisplayName());
                         }
                     }
+                    
+                    lines.add("  " + EnumChatFormatting.WHITE + EnumChatFormatting.ITALIC + locTT("upgradeInstructions"));
                 }
             }
             else
