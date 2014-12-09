@@ -5,6 +5,7 @@ import static org.wyldmods.toolutilities.common.Config.*;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
@@ -21,8 +22,10 @@ import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.compat.MekanismCompat;
 import org.wyldmods.toolutilities.common.handlers.AOEHandler;
+import org.wyldmods.toolutilities.common.handlers.BrokenToolManager;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
 import org.wyldmods.toolutilities.common.handlers.UpgradeToolManager;
+import org.wyldmods.toolutilities.common.items.BrokenTool;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
@@ -53,6 +56,8 @@ public class ToolUtilities
 	public static ItemStack nineItem;
 	public static ItemStack hoeAreaItem;
 	public static ItemStack swordAreaItem;
+	
+	public static Item brokenTool;
 
 	public static ArrayList<Item> blacklistedItems = new ArrayList<Item>();
 
@@ -69,6 +74,10 @@ public class ToolUtilities
 		MinecraftForge.EVENT_BUS.register(new PlaceItem());
 		MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
 		MinecraftForge.EVENT_BUS.register(new AOEHandler());
+		MinecraftForge.EVENT_BUS.register(new BrokenToolManager());
+		
+		brokenTool = new BrokenTool();
+		GameRegistry.registerItem(brokenTool, "brokenTool");
 	}
 
 	@Mod.EventHandler
@@ -116,6 +125,8 @@ public class ToolUtilities
 		ToolUpgradeRecipe.addUpgradeRecipe(ItemHoe.class, hoeAreaItem, ToolUpgrade.HOExTHREE, hoeAreaXP, allow3x3Hoe);
 
 		ToolUpgradeRecipe.addUpgradeRecipe(ItemSword.class, swordAreaItem, ToolUpgrade.SWORD_AOE, swordAreaXP, allowSwordAOE);
+		
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, new ItemStack(Blocks.cobblestone), ToolUpgrade.UNBREAKABLE, 5, true);
 		
 		doBlacklist(Config.blacklistPlace,ToolUpgrade.PLACE);
 		doBlacklist(Config.blacklist3x1,ToolUpgrade.THREExONE);
