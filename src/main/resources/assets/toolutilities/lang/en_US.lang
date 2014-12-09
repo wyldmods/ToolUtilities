@@ -29,3 +29,7 @@ toolUtils.config.swordarea.tooltip=Settings for the sword upgrade
 
 toolUtils.config.featuresallowed=Feature Enabling/Disabling
 toolUtils.config.featuresallowed.tooltip=Enable and Disable upgrades globally
+
+# Names #
+broken=Broken
+brokentool.null=Broken Tool (No Data)
