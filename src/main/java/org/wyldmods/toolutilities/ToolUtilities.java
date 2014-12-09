@@ -56,6 +56,7 @@ public class ToolUtilities
 	public static ItemStack nineItem;
 	public static ItemStack hoeAreaItem;
 	public static ItemStack swordAreaItem;
+	public static ItemStack unbreakableItem;
 	
 	public static Item brokenTool;
 
@@ -99,6 +100,7 @@ public class ToolUtilities
 		nineItem = getStackFromString(Config.nineItem);
 		hoeAreaItem = getStackFromString(Config.hoeAreaItem);
 		swordAreaItem = getStackFromString(Config.swordAreaItem);
+		unbreakableItem = getStackFromString(Config.unbreakableItem);
 
 		String[] seperatedItems = blacklist.split(",");
 		blacklistedItems.clear();
@@ -126,7 +128,7 @@ public class ToolUtilities
 
 		ToolUpgradeRecipe.addUpgradeRecipe(ItemSword.class, swordAreaItem, ToolUpgrade.SWORD_AOE, swordAreaXP, allowSwordAOE);
 		
-		ToolUpgradeRecipe.addUpgradeRecipe(ItemPickaxe.class, new ItemStack(Blocks.cobblestone), ToolUpgrade.UNBREAKABLE, 5, true);
+		ToolUpgradeRecipe.addUpgradeRecipe(ItemTool.class, unbreakableItem, ToolUpgrade.UNBREAKABLE, unbreakableXP, allowUnbreakable);
 		
 		doBlacklist(Config.blacklistPlace,ToolUpgrade.PLACE);
 		doBlacklist(Config.blacklist3x1,ToolUpgrade.THREExONE);
