@@ -67,7 +67,6 @@ public class BrokenTool extends Item {
 		else
 		{
 			ItemStack oldStack = ItemStack.loadItemStackFromNBT(tag);
-			System.out.println(oldStack.getDisplayName());
 			return StatCollector.translateToLocal("broken")+" "+StatCollector.translateToLocal(oldStack.getItem().getUnlocalizedName(oldStack)+".name");
 		}
 	}
