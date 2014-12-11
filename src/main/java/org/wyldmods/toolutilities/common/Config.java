@@ -16,6 +16,7 @@ public class Config
     public static final String sectionSword = "SwordArea";
     public static final String sectionFeatures = "FeaturesAllowed";
     public static final String sectionModules = "Modules";
+    public static final String sectionUnbreakable = "Unbreakable";
     public static final String sectionBlacklist = "Blacklist";
 
     public static int XPAmount;
@@ -45,6 +46,10 @@ public class Config
     public static boolean allow3x3Pick, allow3x3Shovel;
     public static boolean allow3x3Hoe;
     public static boolean allowSwordAOE;
+    public static boolean allowUnbreakable;
+    
+    public static int unbreakableXP;
+    public static String unbreakableItem;
     
     public static boolean mekanismModule;
     public static boolean allowPaxelUpgrades;
@@ -54,6 +59,7 @@ public class Config
     public static String[] blacklist3x3;
     public static String[] blacklistHoe;
     public static String[] blacklistSword;
+    public static String[] blacklistUnbreakable;
 
     public static Configuration config;
 
@@ -116,6 +122,10 @@ public class Config
         allow3x3Shovel = config.get(sectionFeatures, "allow3x3Shovel", true).getBoolean();
         allow3x3Hoe = config.get(sectionFeatures, "allow3x3Hoe", true).getBoolean();
         allowSwordAOE = config.get(sectionFeatures, "allowSwordAOE", true).getBoolean();
+        allowUnbreakable = config.get(sectionFeatures, "allowUnbreakable", true).getBoolean();
+        
+        unbreakableItem = config.get(sectionUnbreakable, "unbreakableItem", "minecraft:obisidian", "Item required for having 'unbreakable' tools").getString();
+        unbreakableXP = config.get(sectionUnbreakable, "unbreakableXP", 10, "Number of levels required for having 'unbreakable' tools").getInt();
         
         mekanismModule = config.get(sectionModules, "mekanism", true).getBoolean();
         allowPaxelUpgrades = config.get(sectionModules,"mekanismPaxel", true, "Allow Mekanism Paxels to receive upgrades").getBoolean();
@@ -125,6 +135,7 @@ public class Config
         blacklist3x3 = config.get(sectionAreaMining,"3x3blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
         blacklistHoe = config.get(sectionHoeArea,"blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
         blacklistSword = config.get(sectionSword,"blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
+        blacklistUnbreakable = config.get(sectionUnbreakable,"blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
         
         if (config.hasChanged())
         {
