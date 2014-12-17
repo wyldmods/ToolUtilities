@@ -141,16 +141,18 @@ public class AOEHandler
 
         for (int i = 0; i < locations.length; i++)
         {
-            Block miningBlock = event.world.getBlock(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]);
-            int meta = event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]);
-            if (canHarvestBlock(player, event.block, miningBlock, meta, event.x, event.y, event.z))
+            int curX = event.x + locations[i][0];
+            int curY = event.y + locations[i][1];
+            int curZ = event.z + locations[i][2];
+
+            Block miningBlock = event.world.getBlock(curX, curY, curZ);
+            int meta = event.world.getBlockMetadata(curX, curY, curZ);
+            if (canHarvestBlock(player, event.block, miningBlock, meta, curX, curY, curZ))
             {
-                if (!((ItemTool) current.getItem()).onBlockStartBreak(current, event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2], player))
+                if (!((ItemTool) current.getItem()).onBlockStartBreak(current, curX, curY, curZ, player))
                 {
-                    mineBlock(event.world, event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2],
-                            event.world.getBlockMetadata(event.x + locations[i][0], event.y + locations[i][1], event.z + locations[i][2]), player, miningBlock);
-                    ((ItemTool) current.getItem()).onBlockDestroyed(current, event.world, miningBlock, event.x + locations[i][0], event.y + locations[i][1], event.z
-                            + locations[i][2], player);
+                    mineBlock(event.world, curX, curY, curZ, meta, player, miningBlock);
+                    ((ItemTool) current.getItem()).onBlockDestroyed(current, event.world, miningBlock, curX, curY, curZ, player);
                     player.addExhaustion((float) 0.025);
                 }
             }
