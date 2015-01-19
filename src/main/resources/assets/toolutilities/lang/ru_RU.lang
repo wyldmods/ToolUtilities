@@ -5,8 +5,9 @@ toolUtils.tooltip.upgradesPossible=Возможные улучшения:
 toolUtils.tooltip.pressShift=Нажмите %sShift%s для информации об улучшениях
 toolUtils.tooltip.pressControl=Нажмите %sControl%s для информации о предметах
 toolUtils.tooltip.requiredItem=Требуются предметы:
+toolUtils.tooltip.upgradeInstructions=Применяется на наковальне
 toolUtils.upgrade.place.tooltip=Размещение: Может размещать блоки и использовать предметы
-toolUtils.upgrade.threexone.tooltip=3x1: Добывает Ресурсы в прямоугольнике 3 на 1
+toolUtils.upgrade.threexone.tooltip=3x1: Добывает ресурсы в прямоугольнике 3 на 1
 toolUtils.upgrade.threexthree.tooltip=3x3: Добывает ресурсы в квадрате 3 на 3
 toolUtils.upgrade.hoexthree.tooltip=AOE: Собирает растения в квадрате 3 на 3
 toolUtils.upgrade.sword_aoe.tooltip=AOE: Поражает других существ рядом с целью.
@@ -28,3 +29,7 @@ toolUtils.config.swordarea.tooltip=Настройки для улучшения 
 
 toolUtils.config.featuresallowed=Включение/Отключение возможностей
 toolUtils.config.featuresallowed.tooltip=Глобальное отключение или включение улучшений
+
+# Names #
+broken=Сломано
+brokentool.null=Сломанный инструмент (нет данных)
