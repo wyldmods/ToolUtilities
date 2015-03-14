@@ -132,7 +132,7 @@ public class Config
         mekanismModule = config.get(sectionModules, "mekanism", true).getBoolean();
         allowPaxelUpgrades = config.get(sectionModules,"mekanismPaxel", true, "Allow Mekanism Paxels to receive upgrades").getBoolean();
 
-        railcraftModule = config.get(sectionModules,"railcraft",true,"Allow Crowbars to receive some upgrades").getBoolean();
+        railcraftModule = config.get(sectionModules,"railcraft",true,"Allow Crowbars to receive Sword upgrades").getBoolean();
         
         blacklistPlace = config.get(sectionRightClick,"toolBlacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
         blacklist3x1 = config.get(sectionAreaMining,"3x1blacklist", "", "Unlocalized name of tools for blacklisting (Comma separated)").getString().split(",");
