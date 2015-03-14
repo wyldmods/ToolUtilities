@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
 import org.wyldmods.toolutilities.common.compat.MekanismCompat;
+import org.wyldmods.toolutilities.common.compat.RailcraftCompat;
 import org.wyldmods.toolutilities.common.handlers.AOEHandler;
 import org.wyldmods.toolutilities.common.handlers.BrokenToolManager;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
@@ -37,7 +38,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory", dependencies="after:MekanismTools")
+@Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory", dependencies="after:MekanismTools;after:Railcraft")
 public class ToolUtilities
 {
 	public static final String MODID = "ToolUtilities";
@@ -90,6 +91,10 @@ public class ToolUtilities
 		{
 			MekanismCompat.addMekanismRecipes();
 		}
+        if (Loader.isModLoaded("Railcraft") && Config.railcraftModule)
+        {
+            RailcraftCompat.addRailcraftRecipes();
+        }
 	}
 
 	public void doConfig()
