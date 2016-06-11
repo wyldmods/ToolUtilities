@@ -3,14 +3,14 @@ package org.wyldmods.toolutilities.common.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class DirectionHelper {
 
-	public static MovingObjectPosition raytraceFromEntity(World world, Entity player, boolean par3, double range)
+	public static RayTraceResult raytraceFromEntity(World world, Entity player, boolean par3, double range)
 	{	// 100% borrowed from Tinkers Construct (CC0 license).
 		float f = 1.0F;
 		float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
@@ -20,7 +20,7 @@ public class DirectionHelper {
 		if (!world.isRemote && player instanceof EntityPlayer)
 			d1 += 1.62D;
 		double d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * (double) f;
-		Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
+		Vec3d vec3 = new Vec3d(d0, d1, d2);
 		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
 		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
 		float f5 = -MathHelper.cos(-f1 * 0.017453292F);
@@ -30,10 +30,10 @@ public class DirectionHelper {
 		double d3 = range;
 		if (player instanceof EntityPlayerMP)
 		{
-			d3 = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
+			d3 = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
 		}
-		Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-		return world.func_147447_a(vec3, vec31, par3, !par3, par3);
+		Vec3d vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
+		return world.rayTraceBlocks(vec3, vec31, par3, !par3, par3);
 	}
 
 
@@ -45,21 +45,21 @@ public class DirectionHelper {
 	public static int[][] mineArrayWest = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, -1, 1 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 1, -1 }, { 0, 0, -1 }, { 0, -1, -1 } };
 	public static int[][] mineDefault = { {0, 0, 0} };
 
-	public static int[][] get3x3MiningCoordinates(MovingObjectPosition mop)
+	public static int[][] get3x3MiningCoordinates(RayTraceResult mop)
 	{
 		switch (mop.sideHit)
 		{
-		case 0: // Bottom
+		case DOWN:
 			return mineArrayBottom;
-		case 1: // Top
+		case UP:
 			return mineArrayTop;
-		case 2: // South
+		case SOUTH:
 			return mineArraySouth;
-		case 3: // North
+		case NORTH:
 			return mineArrayNorth;
-		case 4: // East
+		case EAST:
 			return mineArrayEast;
-		case 5: // West
+		case WEST:
 			return mineArrayWest;
 		default:
 			return mineDefault;

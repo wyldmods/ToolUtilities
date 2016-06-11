@@ -4,10 +4,10 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
         maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
-    dependencies { classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT' }
+    dependencies { classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT' }
 }
 
-apply plugin: 'forge'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 group = 'org.wyldmods.toolutilities'
 archivesBaseName = "ToolUtilities"
@@ -15,6 +15,8 @@ version = "MC${minecraft_version}-${mod_version}-${System.getenv().BUILD_NUMBER}
 
 minecraft {
     version = "${minecraft_version}-${forge_version}"
+	mappings = 'snapshot_20160611'
+	
     runDir = 'run'
 }
 

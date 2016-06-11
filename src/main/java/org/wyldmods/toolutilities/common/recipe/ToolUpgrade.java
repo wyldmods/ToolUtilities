@@ -1,12 +1,13 @@
 package org.wyldmods.toolutilities.common.recipe;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.wyldmods.toolutilities.ToolUtilities;
 import org.wyldmods.toolutilities.common.util.NBTHelper;
 
+@SuppressWarnings("deprecation")
 public enum ToolUpgrade
 {
     PLACE, THREExONE(2), THREExTHREE(1), HOExTHREE, SWORD_AOE, UNBREAKABLE;
@@ -59,12 +60,12 @@ public enum ToolUpgrade
 
     public String getTooltip()
     {
-        return StatCollector.translateToLocal(tooltip);
+        return I18n.translateToLocal(tooltip);
     }
 
     public static boolean hasUpgrade(ItemStack stack, ToolUpgrade upgrade)
     {
-        return stack.stackTagCompound != null && stack.stackTagCompound.getBoolean(upgrade.nbtKey);
+        return stack.getTagCompound() != null && stack.getTagCompound().getBoolean(upgrade.nbtKey);
     }
 
     public boolean isOn(ItemStack stack)

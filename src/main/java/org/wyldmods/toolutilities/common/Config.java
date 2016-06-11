@@ -2,11 +2,11 @@ package org.wyldmods.toolutilities.common;
 
 import java.io.File;
 
-import org.wyldmods.toolutilities.ToolUtilities;
-
-import cpw.mods.fml.client.event.ConfigChangedEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import org.wyldmods.toolutilities.ToolUtilities;
 
 public class Config
 {
@@ -151,7 +151,7 @@ public class Config
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event)
     {
-        if (event.modID.equals(ToolUtilities.MODID))
+        if (event.getModID().equals(ToolUtilities.MODID))
         {
             syncConfig();
         }

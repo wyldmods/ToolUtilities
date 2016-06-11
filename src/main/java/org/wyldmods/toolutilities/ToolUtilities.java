@@ -1,11 +1,8 @@
 package org.wyldmods.toolutilities;
 
-import static org.wyldmods.toolutilities.common.Config.*;
-
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
@@ -15,13 +12,18 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import org.apache.logging.log4j.Logger;
 import org.wyldmods.toolutilities.common.CommonProxy;
 import org.wyldmods.toolutilities.common.Config;
-import org.wyldmods.toolutilities.common.compat.MekanismCompat;
-import org.wyldmods.toolutilities.common.compat.RailcraftCompat;
 import org.wyldmods.toolutilities.common.handlers.AOEHandler;
 import org.wyldmods.toolutilities.common.handlers.BrokenToolManager;
 import org.wyldmods.toolutilities.common.handlers.PlaceItem;
@@ -30,13 +32,7 @@ import org.wyldmods.toolutilities.common.items.BrokenTool;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import static org.wyldmods.toolutilities.common.Config.*;
 
 @Mod(modid = ToolUtilities.MODID, name = ToolUtilities.MODID, version = "0.0.1", guiFactory = "org.wyldmods.toolutilities.client.config.TUConfigFactory", dependencies="after:MekanismTools;after:Railcraft")
 public class ToolUtilities
@@ -71,7 +67,7 @@ public class ToolUtilities
 		logger = event.getModLog();
 
 		configHandler = Config.init(event.getSuggestedConfigurationFile());
-		FMLCommonHandler.instance().bus().register(configHandler);
+		MinecraftForge.EVENT_BUS.register(configHandler);
 
 		MinecraftForge.EVENT_BUS.register(new PlaceItem());
 		MinecraftForge.EVENT_BUS.register(new UpgradeToolManager());
@@ -79,7 +75,7 @@ public class ToolUtilities
 		MinecraftForge.EVENT_BUS.register(new BrokenToolManager());
 		
 		brokenTool = new BrokenTool();
-		GameRegistry.registerItem(brokenTool, "brokenTool");
+		GameRegistry.register(brokenTool.setRegistryName("brokenTool"));
 	}
 
 	@Mod.EventHandler
@@ -89,11 +85,11 @@ public class ToolUtilities
 
 		if (Loader.isModLoaded("MekanismTools") && Config.mekanismModule)
 		{
-			MekanismCompat.addMekanismRecipes();
+			//MekanismCompat.addMekanismRecipes();
 		}
         if (Loader.isModLoaded("Railcraft") && Config.railcraftModule)
         {
-            RailcraftCompat.addRailcraftRecipes();
+            //RailcraftCompat.addRailcraftRecipes();
         }
 	}
 
@@ -150,19 +146,20 @@ public class ToolUtilities
 		if (info.length < 2)
 		{
 			logger.info("Issue with " + input + ". Format: modid:item:damage. Reverting to default.");
-			outputStack = new ItemStack(Items.water_bucket, 1);
+			outputStack = new ItemStack(Items.WATER_BUCKET, 1);
 		}
 		else
 		{
-			Item possible = GameRegistry.findItem(info[0], info[1]);
+		    ResourceLocation res = new ResourceLocation(info[0], info[1]);
+			Item possible = Item.REGISTRY.getObject(res);
 			if (possible == null)
 			{
 				// Try block instead
-				Block possibleBlock = GameRegistry.findBlock(info[0], info[1]);
+				Block possibleBlock = Block.REGISTRY.getObject(res);
 				if (possibleBlock == null)
 				{
 					logger.info("Issue(2) with " + input + ". Format: modid:item:damage. Reverting to default.");
-					outputStack = new ItemStack(Items.water_bucket, 1);
+					outputStack = new ItemStack(Items.WATER_BUCKET, 1);
 				}
 				else
 				{

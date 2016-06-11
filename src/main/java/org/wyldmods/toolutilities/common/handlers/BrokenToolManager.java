@@ -5,44 +5,41 @@ import java.util.Map;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import org.wyldmods.toolutilities.ToolUtilities;
 import org.wyldmods.toolutilities.common.recipe.ToolUpgrade;
-import org.wyldmods.toolutilities.common.recipe.ToolUpgradeRecipe;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class BrokenToolManager {
 
 	@SubscribeEvent
 	public void handleAnvilEvent(AnvilUpdateEvent event)
 	{
-		if (event.left != null && event.left.getItem()==ToolUtilities.brokenTool)
+		if (event.getLeft() != null && event.getLeft().getItem() == ToolUtilities.brokenTool)
 		{
-			ItemStack repairedTool = ItemStack.loadItemStackFromNBT(event.left.getTagCompound());
+			ItemStack repairedTool = ItemStack.loadItemStackFromNBT(event.getLeft().getTagCompound());
 
-			event.cost=repairedTool.getRepairCost() + event.right.getRepairCost();
-			System.out.println(event.cost);
-			if (repairedTool.getItem().getIsRepairable(repairedTool, event.right))
+			event.setCost(repairedTool.getRepairCost() + event.getRight().getRepairCost());
+			System.out.println(event.getCost());
+			if (repairedTool.getItem().getIsRepairable(repairedTool, event.getRight()))
 			{
 				ItemStack repairStack = repairedTool.copy();
 				Map map = EnchantmentHelper.getEnchantments(repairStack);
-				int k = Math.min(repairedTool.getItemDamageForDisplay(), repairedTool.getMaxDamage() / 4);
+				int k = Math.min(repairedTool.getItemDamage(), repairedTool.getMaxDamage() / 4);
 				int i=0;
-				for (int l = 0; k > 0 && l < event.right.stackSize; ++l)
+				for (int l = 0; k > 0 && l < event.getRight().stackSize; ++l)
 				{
-					int i1 = repairedTool.getItemDamageForDisplay() - k;
+					int i1 = repairedTool.getItemDamage() - k;
 					repairStack.setItemDamage(i1);
 					i += Math.max(1, k / 100) + map.size();
-					k = Math.min(repairStack.getItemDamageForDisplay(), repairStack.getMaxDamage() / 4);
+					k = Math.min(repairStack.getItemDamage(), repairStack.getMaxDamage() / 4);
 				}
 				
+				/* TODO
 				//Guess who's code this is (Hint: Not mine)
 				int k1=0;
 				int l1=0;
@@ -80,7 +77,8 @@ public class BrokenToolManager {
 				}
 
 				event.cost = i+k2;
-				event.output=repairStack;				
+				*/
+				event.setOutput(repairStack);				
 			}
 		}
 	}
@@ -89,7 +87,7 @@ public class BrokenToolManager {
 	@SubscribeEvent
 	public void brokenToolSpawn(BreakEvent event)
 	{
-		ItemStack currentStack = event.getPlayer().getCurrentEquippedItem();
+		ItemStack currentStack = event.getPlayer().getHeldItemMainhand();
 		if (currentStack != null && ToolUpgrade.hasUpgrade(currentStack, ToolUpgrade.UNBREAKABLE))
 		{
 			ItemStack brokenStack = new ItemStack(ToolUtilities.brokenTool);
